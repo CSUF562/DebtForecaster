@@ -40,7 +40,7 @@ function validContext(): ContextEvidence {
   };
 }
 
-test("builds a publishable daily brief from the two latest valid observations", () => {
+test("builds a publishable daily brief with structured unresolved causation", () => {
   const result = buildDailyAccountingBrief(
     [
       observation("2026-09-15", "90.00", "45.00", "135.00"),
@@ -52,8 +52,10 @@ test("builds a publishable daily brief from the two latest valid observations", 
 
   assert.equal(result.publicationStatus, "publishable");
   assert.equal(result.governance?.publishable, true);
-  assert.equal(result.explanation?.recordDate, "2026-09-17");
-  assert.equal(result.explanation?.priorRecordDate, "2026-09-16");
+  assert.equal(result.unresolved.length, 1);
+  assert.equal(result.unresolved[0].reason, "causation-unresolved");
+  assert.equal(result.unresolved[0].resolvable, true);
+  assert.ok(result.unresolved[0].resolutionCriteria.length > 0);
 });
 
 test("returns insufficient-history when there is no prior valid observation", () => {
@@ -63,6 +65,7 @@ test("returns insufficient-history when there is no prior valid observation", ()
 
   assert.equal(result.publicationStatus, "insufficient-history");
   assert.equal(result.explanation, null);
+  assert.equal(result.unresolved.length, 0);
   assert.equal(result.governance, null);
 });
 
