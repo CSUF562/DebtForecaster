@@ -104,7 +104,13 @@ export default async function HomePage() {
             <h2>What Changed?</h2>
           </div>
 
-          {dailyBrief.explanation ? (
+          {dailyBrief.publicationStatus === "blocked" && (
+            <p className="status warning">
+              ERC13 blocked this daily brief from publication because one or more evidence gates failed.
+            </p>
+          )}
+
+          {dailyBrief.explanation && dailyBrief.publicationStatus === "publishable" ? (
             <>
               <div className="claims">
                 {dailyBrief.explanation.claims.map(claim => (
@@ -118,11 +124,22 @@ export default async function HomePage() {
               </div>
               <p className="boundary">{dailyBrief.explanation.evidenceBoundary}</p>
             </>
-          ) : (
+              {dailyBrief.governance && (
+                <div className="governance">
+                  <strong>ERC13 publication gates</strong>
+                  <span>
+                    {dailyBrief.governance.results
+                      .map(result => `${result.gate}: ${result.status}`)
+                      .join(" · ")}
+                  </span>
+                </div>
+              )}
+            </>
+          ) : dailyBrief.publicationStatus === "insufficient-history" ? (
             <p className="status warning">
               A prior validated Treasury observation is required before Enclave can explain the daily accounting change.
             </p>
-          )}
+          ) : null}
         </section>
 
         <section className="method">
