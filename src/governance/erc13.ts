@@ -1,6 +1,8 @@
 import type { WhatChangedExplanation } from "../explanations/whatChanged.js";
 import type { ContextEvidence } from "../context/contextEvidence.js";
 import { validateContextEvidence } from "../context/contextEvidence.js";
+import type { UnresolvedKnowledge } from "../epistemics/unresolvedKnowledge.js";
+import { validateUnresolvedKnowledge } from "../epistemics/unresolvedKnowledge.js";
 
 export interface Erc13GateResult {
   gate:
@@ -8,7 +10,8 @@ export interface Erc13GateResult {
     | "G2-classification"
     | "G3-causality"
     | "G4-source-quality"
-    | "G5-uncertainty-revision";
+    | "G5-uncertainty-revision"
+    | "G6-unresolved-knowledge";
   status: "pass" | "fail";
   findings: string[];
 }
@@ -21,13 +24,15 @@ export interface Erc13Assessment {
 
 export function assessDailyExplanation(
   explanation: WhatChangedExplanation,
-  context: ContextEvidence[] = []
+  context: ContextEvidence[] = [],
+  unresolved: UnresolvedKnowledge[] = []
 ): Erc13Assessment {
   const sourceFindings: string[] = [];
   const classificationFindings: string[] = [];
   const causalityFindings: string[] = [];
   const sourceQualityFindings: string[] = [];
   const uncertaintyFindings: string[] = [];
+  const unresolvedFindings: string[] = [];
 
   if (!explanation.currentObservationId || !explanation.priorObservationId) {
     sourceFindings.push("Explanation is missing source observation lineage.");
@@ -83,6 +88,13 @@ export function assessDailyExplanation(
     }
   }
 
+  for (const item of unresolved) {
+    const findings = validateUnresolvedKnowledge(item);
+    unresolvedFindings.push(
+      ...findings.map(finding => `${item.id}: ${finding}`)
+    );
+  }
+
   const results: Erc13GateResult[] = [
     {
       gate: "G1-source",
@@ -108,6 +120,11 @@ export function assessDailyExplanation(
       gate: "G5-uncertainty-revision",
       status: uncertaintyFindings.length === 0 ? "pass" : "fail",
       findings: uncertaintyFindings
+    },
+    {
+      gate: "G6-unresolved-knowledge",
+      status: unresolvedFindings.length === 0 ? "pass" : "fail",
+      findings: unresolvedFindings
     }
   ];
 
