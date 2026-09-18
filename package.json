@@ -6,7 +6,8 @@
   "scripts": {
     "test": "tsx --test tests/**/*.test.ts",
     "test:debt": "tsx --test tests/debt.test.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "smoke:treasury": "tsx scripts/treasury-smoke.ts"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
