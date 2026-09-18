@@ -15,6 +15,7 @@ import {
 
 export interface DebtSnapshot {
   generatedAt: string;
+  history: DebtObservation[];
   latest: DebtObservation | null;
   freshness: FreshnessAssessment | null;
   trends: {
@@ -41,6 +42,7 @@ export function buildDebtSnapshotFromHistory(
   if (!latest) {
     return {
       generatedAt: now.toISOString(),
+      history,
       latest: null,
       freshness: null,
       trends: {
@@ -61,6 +63,7 @@ export function buildDebtSnapshotFromHistory(
 
   return {
     generatedAt: now.toISOString(),
+    history,
     latest,
     freshness,
     trends,
