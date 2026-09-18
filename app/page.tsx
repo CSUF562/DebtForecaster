@@ -125,6 +125,22 @@ export default async function HomePage() {
 
               <p className="boundary">{dailyBrief.explanation.evidenceBoundary}</p>
 
+              {dailyBrief.unresolved.map(item => (
+                <aside className="unknown-card" key={item.id}>
+                  <span className="claim-label unresolved">unresolved</span>
+                  <h3>{item.question}</h3>
+                  <p>{item.currentState}</p>
+                  <details>
+                    <summary>What could resolve this?</summary>
+                    <ul>
+                      {item.resolutionCriteria.map(criterion => (
+                        <li key={criterion}>{criterion}</li>
+                      ))}
+                    </ul>
+                  </details>
+                </aside>
+              ))}
+
               {dailyBrief.governance && (
                 <div className="governance">
                   <strong>ERC13 publication gates</strong>
@@ -146,9 +162,9 @@ export default async function HomePage() {
         <section className="method">
           <p>
             Enclave distinguishes observed accounting facts from derived measures,
-            contextual evidence, modeled projections, and hypotheses.
+            contextual evidence, modeled projections, hypotheses, and unresolved knowledge.
           </p>
-          <p>Daily debt movement alone does not establish why the debt changed.</p>
+          <p>Uncertainty is preserved when the evidence has not yet justified a stronger conclusion.</p>
         </section>
       </main>
     );
