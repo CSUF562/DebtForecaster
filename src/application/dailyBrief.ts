@@ -9,11 +9,16 @@ import {
   type Erc13Assessment
 } from "../governance/erc13.js";
 import type { ContextEvidence } from "../context/contextEvidence.js";
+import {
+  createCausationUnresolved,
+  type UnresolvedKnowledge
+} from "../epistemics/unresolvedKnowledge.js";
 
 export interface DailyAccountingBrief {
   latestObservationId: string | null;
   priorObservationId: string | null;
   explanation: WhatChangedExplanation | null;
+  unresolved: UnresolvedKnowledge[];
   governance: Erc13Assessment | null;
   publicationStatus:
     | "publishable"
@@ -32,6 +37,7 @@ export function buildDailyAccountingBrief(
       latestObservationId: null,
       priorObservationId: null,
       explanation: null,
+      unresolved: [],
       governance: null,
       publicationStatus: "insufficient-history"
     };
@@ -51,18 +57,37 @@ export function buildDailyAccountingBrief(
       latestObservationId: latest.id,
       priorObservationId: null,
       explanation: null,
+      unresolved: [],
       governance: null,
       publicationStatus: "insufficient-history"
     };
   }
 
   const explanation = explainAccountingChange(latest, prior);
-  const governance = assessDailyExplanation(explanation, context);
+
+  const unresolved: UnresolvedKnowledge[] = [
+    createCausationUnresolved({
+      id: `unk-cause-${latest.recordDate}`,
+      question: `What caused the reported change in total public debt between ${prior.recordDate} and ${latest.recordDate}?`,
+      currentState:
+        "Treasury accounting establishes the reported change and its component movements, but the currently assembled evidence does not establish a complete causal explanation.",
+      relatedObservationIds: [prior.id, latest.id],
+      relatedContextIds: context.map(item => item.id),
+      createdAt: latest.retrievedAt,
+      resolutionCriteria: [
+        "Primary-source evidence that directly links the accounting movement to identifiable federal transactions, financing operations, or other documented drivers.",
+        "Any causal interpretation must reconcile with the observed component changes and survive ERC13 source-quality and uncertainty review."
+      ]
+    })
+  ];
+
+  const governance = assessDailyExplanation(explanation, context, unresolved);
 
   return {
     latestObservationId: latest.id,
     priorObservationId: prior.id,
     explanation,
+    unresolved,
     governance,
     publicationStatus: governance.publishable ? "publishable" : "blocked"
   };
