@@ -127,6 +127,74 @@ h1 {
   font-size: 1rem;
 }
 
+.what-changed {
+  margin-top: 1rem;
+  padding: 2rem;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 1.25rem;
+  background: rgba(255,255,255,.025);
+}
+
+.section-heading h2 {
+  margin: 0 0 1.5rem;
+  font-size: clamp(1.75rem, 4vw, 3rem);
+  letter-spacing: -.035em;
+}
+
+.claims {
+  display: grid;
+  gap: .8rem;
+}
+
+.claim {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 1rem;
+  align-items: start;
+  padding: 1rem 0;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.claim p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.claim-label {
+  width: fit-content;
+  padding: .28rem .48rem;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: .4rem;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  font-size: .65rem;
+  color: #c5ceda;
+}
+
+.claim-label.observed {
+  background: rgba(75, 170, 115, .12);
+}
+
+.claim-label.derived {
+  background: rgba(94, 129, 172, .14);
+}
+
+.claim-label.contextual {
+  background: rgba(154, 113, 188, .14);
+}
+
+.claim-label.hypothesis {
+  background: rgba(193, 133, 53, .12);
+}
+
+.boundary {
+  margin: 1.5rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255,255,255,.08);
+  color: #9aa7b9;
+  line-height: 1.6;
+}
+
 .method {
   margin-top: 1rem;
   padding-top: 1.5rem;
@@ -145,7 +213,16 @@ h1 {
     grid-template-columns: 1fr;
   }
 
+  .claim {
+    grid-template-columns: 1fr;
+    gap: .55rem;
+  }
+
   .debt {
     overflow-wrap: anywhere;
+  }
+
+  .what-changed {
+    padding: 1.25rem;
   }
 }
