@@ -122,8 +122,9 @@ export default async function HomePage() {
                   </article>
                 ))}
               </div>
+
               <p className="boundary">{dailyBrief.explanation.evidenceBoundary}</p>
-            </>
+
               {dailyBrief.governance && (
                 <div className="governance">
                   <strong>ERC13 publication gates</strong>
