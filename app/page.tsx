@@ -1,4 +1,5 @@
 import { getDebtSnapshot } from "../src/application/debtSnapshot.js";
+import { buildDailyAccountingBrief } from "../src/application/dailyBrief.js";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +37,7 @@ export default async function HomePage() {
 
     const latest = snapshot.latest;
     const freshness = snapshot.freshness;
+    const dailyBrief = buildDailyAccountingBrief(snapshot.history);
 
     return (
       <main className="shell">
@@ -49,14 +51,10 @@ export default async function HomePage() {
 
           <h1>U.S. National Debt</h1>
           <p className="debt">{formatDollars(latest.totalPublicDebtOutstanding)}</p>
-          <p className="asof">
-            Treasury record date: {latest.recordDate}
-          </p>
+          <p className="asof">Treasury record date: {latest.recordDate}</p>
 
           {!snapshot.publication.canPresentAsCurrent && (
-            <p className="status warning">
-              {snapshot.publication.reason}
-            </p>
+            <p className="status warning">{snapshot.publication.reason}</p>
           )}
         </section>
 
@@ -100,14 +98,39 @@ export default async function HomePage() {
           </article>
         </section>
 
+        <section className="what-changed">
+          <div className="section-heading">
+            <p className="eyebrow">DAILY ACCOUNTING BRIEF</p>
+            <h2>What Changed?</h2>
+          </div>
+
+          {dailyBrief.explanation ? (
+            <>
+              <div className="claims">
+                {dailyBrief.explanation.claims.map(claim => (
+                  <article className="claim" key={claim.id}>
+                    <span className={`claim-label ${claim.evidenceClass}`}>
+                      {claim.evidenceClass}
+                    </span>
+                    <p>{claim.text}</p>
+                  </article>
+                ))}
+              </div>
+              <p className="boundary">{dailyBrief.explanation.evidenceBoundary}</p>
+            </>
+          ) : (
+            <p className="status warning">
+              A prior validated Treasury observation is required before Enclave can explain the daily accounting change.
+            </p>
+          )}
+        </section>
+
         <section className="method">
           <p>
             Enclave distinguishes observed accounting facts from derived measures,
             contextual evidence, modeled projections, and hypotheses.
           </p>
-          <p>
-            Daily debt movement alone does not establish why the debt changed.
-          </p>
+          <p>Daily debt movement alone does not establish why the debt changed.</p>
         </section>
       </main>
     );
