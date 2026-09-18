@@ -247,3 +247,39 @@ h1 {
   letter-spacing: .08em;
   font-size: .68rem;
 }
+
+
+.unknown-card {
+  margin-top: 1.5rem;
+  padding: 1.15rem 1.2rem;
+  border: 1px solid rgba(193, 133, 53, .2);
+  border-radius: .9rem;
+  background: rgba(193, 133, 53, .055);
+}
+
+.unknown-card h3 {
+  margin: .8rem 0 .55rem;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.unknown-card p,
+.unknown-card li,
+.unknown-card summary {
+  color: #aeb9ca;
+  line-height: 1.55;
+}
+
+.unknown-card summary {
+  cursor: pointer;
+  margin-top: .75rem;
+}
+
+.unknown-card ul {
+  margin-bottom: 0;
+  padding-left: 1.2rem;
+}
+
+.claim-label.unresolved {
+  background: rgba(193, 133, 53, .14);
+}
