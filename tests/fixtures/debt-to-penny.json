@@ -1,0 +1,18 @@
+{
+  "data": [
+    {
+      "record_date": "2026-09-17",
+      "debt_held_public_amt": "30000000000000.00",
+      "intragov_hold_amt": "8000000000000.00",
+      "tot_pub_debt_out_amt": "38000000000000.00",
+      "src_line_nbr": "1"
+    },
+    {
+      "record_date": "2026-09-16",
+      "debt_held_public_amt": "29990000000000.00",
+      "intragov_hold_amt": "7999000000000.00",
+      "tot_pub_debt_out_amt": "37989000000000.00",
+      "src_line_nbr": "1"
+    }
+  ]
+}
