@@ -50,6 +50,9 @@ export default async function EvidencePage() {
         </div>
 
         <article className="ledger-card">
+          <p className="technical">ERC13 {release.erc13ProtocolVersion} · {release.environmentName ?? "environment unavailable"} · test-gated production build</p>
+          <details className="technical-disclosure">
+            <summary>Technical release provenance</summary>
           <dl className="ledger-meta">
             <div><dt>Commit</dt><dd><code>{release.commitSha ?? "unavailable"}</code></dd></div>
             <div><dt>Branch</dt><dd>{release.branch ?? "unavailable"}</dd></div>
@@ -60,6 +63,7 @@ export default async function EvidencePage() {
             <div><dt>ERC13 protocol</dt><dd>{release.erc13ProtocolVersion}</dd></div>
             <div><dt>Release gate</dt><dd>{release.productionTestGate}</dd></div>
           </dl>
+          </details>
           <p className="context-boundary">
             Production images are configured to run the full test suite before
             the application build. Release metadata identifies the software
@@ -87,14 +91,20 @@ export default async function EvidencePage() {
               <h3>{record.title}</h3>
               <p>{record.summary}</p>
 
-              <dl className="ledger-meta">
-                <div><dt>Event date</dt><dd>{formatDate(record.eventDate)}</dd></div>
-                <div><dt>Retrieved</dt><dd>{formatDateTime(record.retrievedAt)}</dd></div>
-                <div><dt>Source</dt><dd>{record.sourceName}</dd></div>
-                <div><dt>Confidence</dt><dd>{record.confidence}</dd></div>
-                <div><dt>Version</dt><dd><code>{record.versionId}</code></dd></div>
-                <div><dt>Hash</dt><dd><code>{record.contentHash}</code></dd></div>
-              </dl>
+              <div className="evidence-summary">
+                <span>{record.sourceName}</span>
+                <span>{formatDate(record.eventDate)}</span>
+                <span>confidence: {record.confidence}</span>
+              </div>
+
+              <details className="technical-disclosure">
+                <summary>Technical provenance</summary>
+                <dl className="ledger-meta">
+                  <div><dt>Retrieved</dt><dd>{formatDateTime(record.retrievedAt)}</dd></div>
+                  <div><dt>Version</dt><dd><code>{record.versionId}</code></dd></div>
+                  <div><dt>Hash</dt><dd><code>{record.contentHash}</code></dd></div>
+                </dl>
+              </details>
 
               <p className="context-boundary">{record.uncertaintyNote}</p>
 
