@@ -7,6 +7,10 @@ import type { CompetingExplanationSet } from "../epistemics/hypotheses.js";
 import { validateCompetingExplanationSet } from "../epistemics/hypotheses.js";
 import type { ContextMateriality } from "../epistemics/materiality.js";
 import { validateContextMateriality } from "../epistemics/materiality.js";
+import type { CorroborationSet } from "../epistemics/corroboration.js";
+import { validateCorroborationSet } from "../epistemics/corroboration.js";
+import type { CounterevidenceReview } from "../epistemics/counterevidence.js";
+import { validateCounterevidenceReview } from "../epistemics/counterevidence.js";
 
 export interface Erc13GateResult {
   gate:
@@ -17,13 +21,15 @@ export interface Erc13GateResult {
     | "G5-uncertainty-revision"
     | "G6-unresolved-knowledge"
     | "G7-competing-explanations"
-    | "G8-materiality";
+    | "G8-materiality"
+    | "G9-corroboration-independence"
+    | "G10-counterevidence";
   status: "pass" | "fail";
   findings: string[];
 }
 
 export interface Erc13Assessment {
-  protocolVersion: "0.4.0";
+  protocolVersion: "0.5.0";
   publishable: boolean;
   results: Erc13GateResult[];
 }
@@ -33,7 +39,9 @@ export function assessDailyExplanation(
   context: ContextEvidence[] = [],
   unresolved: UnresolvedKnowledge[] = [],
   competingExplanations: CompetingExplanationSet[] = [],
-  materiality: ContextMateriality[] = []
+  materiality: ContextMateriality[] = [],
+  corroboration: CorroborationSet[] = [],
+  counterevidence: CounterevidenceReview[] = []
 ): Erc13Assessment {
   const sourceFindings: string[] = [];
   const classificationFindings: string[] = [];
@@ -43,6 +51,8 @@ export function assessDailyExplanation(
   const unresolvedFindings: string[] = [];
   const competingExplanationFindings: string[] = [];
   const materialityFindings: string[] = [];
+  const corroborationFindings: string[] = [];
+  const counterevidenceFindings: string[] = [];
 
   if (!explanation.currentObservationId || !explanation.priorObservationId) {
     sourceFindings.push("Explanation is missing source observation lineage.");
@@ -99,71 +109,54 @@ export function assessDailyExplanation(
   }
 
   for (const item of unresolved) {
-    const findings = validateUnresolvedKnowledge(item);
     unresolvedFindings.push(
-      ...findings.map(finding => `${item.id}: ${finding}`)
+      ...validateUnresolvedKnowledge(item).map(finding => `${item.id}: ${finding}`)
     );
   }
 
   for (const set of competingExplanations) {
-    const findings = validateCompetingExplanationSet(set);
     competingExplanationFindings.push(
-      ...findings.map(finding => `${set.questionId}: ${finding}`)
+      ...validateCompetingExplanationSet(set).map(
+        finding => `${set.questionId}: ${finding}`
+      )
     );
   }
 
   for (const item of materiality) {
-    const findings = validateContextMateriality(item);
     materialityFindings.push(
-      ...findings.map(finding => `${item.contextId}: ${finding}`)
+      ...validateContextMateriality(item).map(
+        finding => `${item.contextId}: ${finding}`
+      )
+    );
+  }
+
+  for (const set of corroboration) {
+    corroborationFindings.push(...validateCorroborationSet(set));
+  }
+
+  for (const review of counterevidence) {
+    counterevidenceFindings.push(
+      ...validateCounterevidenceReview(review).map(
+        finding => `${review.hypothesisId}: ${finding}`
+      )
     );
   }
 
   const results: Erc13GateResult[] = [
-    {
-      gate: "G1-source",
-      status: sourceFindings.length === 0 ? "pass" : "fail",
-      findings: sourceFindings
-    },
-    {
-      gate: "G2-classification",
-      status: classificationFindings.length === 0 ? "pass" : "fail",
-      findings: classificationFindings
-    },
-    {
-      gate: "G3-causality",
-      status: causalityFindings.length === 0 ? "pass" : "fail",
-      findings: causalityFindings
-    },
-    {
-      gate: "G4-source-quality",
-      status: sourceQualityFindings.length === 0 ? "pass" : "fail",
-      findings: sourceQualityFindings
-    },
-    {
-      gate: "G5-uncertainty-revision",
-      status: uncertaintyFindings.length === 0 ? "pass" : "fail",
-      findings: uncertaintyFindings
-    },
-    {
-      gate: "G6-unresolved-knowledge",
-      status: unresolvedFindings.length === 0 ? "pass" : "fail",
-      findings: unresolvedFindings
-    },
-    {
-      gate: "G7-competing-explanations",
-      status: competingExplanationFindings.length === 0 ? "pass" : "fail",
-      findings: competingExplanationFindings
-    },
-    {
-      gate: "G8-materiality",
-      status: materialityFindings.length === 0 ? "pass" : "fail",
-      findings: materialityFindings
-    }
+    { gate: "G1-source", status: sourceFindings.length === 0 ? "pass" : "fail", findings: sourceFindings },
+    { gate: "G2-classification", status: classificationFindings.length === 0 ? "pass" : "fail", findings: classificationFindings },
+    { gate: "G3-causality", status: causalityFindings.length === 0 ? "pass" : "fail", findings: causalityFindings },
+    { gate: "G4-source-quality", status: sourceQualityFindings.length === 0 ? "pass" : "fail", findings: sourceQualityFindings },
+    { gate: "G5-uncertainty-revision", status: uncertaintyFindings.length === 0 ? "pass" : "fail", findings: uncertaintyFindings },
+    { gate: "G6-unresolved-knowledge", status: unresolvedFindings.length === 0 ? "pass" : "fail", findings: unresolvedFindings },
+    { gate: "G7-competing-explanations", status: competingExplanationFindings.length === 0 ? "pass" : "fail", findings: competingExplanationFindings },
+    { gate: "G8-materiality", status: materialityFindings.length === 0 ? "pass" : "fail", findings: materialityFindings },
+    { gate: "G9-corroboration-independence", status: corroborationFindings.length === 0 ? "pass" : "fail", findings: corroborationFindings },
+    { gate: "G10-counterevidence", status: counterevidenceFindings.length === 0 ? "pass" : "fail", findings: counterevidenceFindings }
   ];
 
   return {
-    protocolVersion: "0.4.0",
+    protocolVersion: "0.5.0",
     publishable: results.every(result => result.status === "pass"),
     results
   };
