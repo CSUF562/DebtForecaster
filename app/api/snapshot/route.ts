@@ -2,54 +2,68 @@ import { NextResponse } from "next/server";
 import { getDebtSnapshot } from "../../../src/application/debtSnapshot";
 import { buildDailyAccountingBrief } from "../../../src/application/dailyBrief";
 import { fetchTreasuryYieldCurveContext } from "../../../src/context/treasuryYieldCurve";
+import { fetchCboMonthlyBudgetContext } from "../../../src/context/cboMonthlyBudget";
 import type { ContextEvidence } from "../../../src/context/contextEvidence";
 
 export const dynamic = "force-dynamic";
+
+type SourceStatus = {
+  source: string;
+  status: "available" | "unavailable" | "not-applicable";
+  reason?: string;
+};
 
 export async function GET() {
   try {
     const snapshot = await getDebtSnapshot();
     const context: ContextEvidence[] = [];
-    let contextStatus:
-      | { status: "available"; sources: string[] }
-      | { status: "unavailable"; sources: string[]; reason: string }
-      | { status: "not-applicable"; sources: string[] };
+    const contextStatus: SourceStatus[] = [];
 
     if (!snapshot.latest) {
-      contextStatus = {
-        status: "not-applicable",
-        sources: []
-      };
+      contextStatus.push(
+        { source: "Treasury daily par yield curve", status: "not-applicable" },
+        { source: "CBO Monthly Budget Review", status: "not-applicable" }
+      );
     } else {
-      try {
-        const treasuryContext = await fetchTreasuryYieldCurveContext({
-          asOfDate: snapshot.latest.recordDate
-        });
-
-        if (treasuryContext) {
-          context.push(treasuryContext);
-          contextStatus = {
-            status: "available",
-            sources: ["Treasury daily par yield curve"]
-          };
-        } else {
-          contextStatus = {
-            status: "unavailable",
-            sources: ["Treasury daily par yield curve"],
-            reason:
-              "Treasury returned no yield-curve observation on or before the latest validated debt record date within the requested month."
-          };
+      const sources = [
+        {
+          name: "Treasury daily par yield curve",
+          run: () =>
+            fetchTreasuryYieldCurveContext({
+              asOfDate: snapshot.latest!.recordDate
+            })
+        },
+        {
+          name: "CBO Monthly Budget Review",
+          run: () =>
+            fetchCboMonthlyBudgetContext({
+              asOfDate: snapshot.latest!.recordDate
+            })
         }
-      } catch (error) {
-        console.warn("Live Treasury context unavailable:", error);
-        contextStatus = {
-          status: "unavailable",
-          sources: ["Treasury daily par yield curve"],
-          reason:
-            error instanceof Error
-              ? error.message
-              : "Unknown Treasury context retrieval failure."
-        };
+      ];
+
+      for (const source of sources) {
+        try {
+          const item = await source.run();
+          if (item) {
+            context.push(item);
+            contextStatus.push({ source: source.name, status: "available" });
+          } else {
+            contextStatus.push({
+              source: source.name,
+              status: "unavailable",
+              reason: "No applicable current record was found on or before the latest validated debt date."
+            });
+          }
+        } catch (error) {
+          console.warn(`Live context unavailable from ${source.name}:`, error);
+          contextStatus.push({
+            source: source.name,
+            status: "unavailable",
+            reason:
+              error instanceof Error ? error.message : "Unknown context retrieval failure."
+          });
+        }
       }
     }
 
@@ -73,25 +87,15 @@ export async function GET() {
           governance: brief.governance
         }
       },
-      {
-        headers: {
-          "Cache-Control": "no-store"
-        }
-      }
+      { headers: { "Cache-Control": "no-store" } }
     );
   } catch (error) {
     return NextResponse.json(
       {
         error: "ENCLAVE_SNAPSHOT_UNAVAILABLE",
-        message:
-          error instanceof Error ? error.message : "Unknown snapshot failure"
+        message: error instanceof Error ? error.message : "Unknown snapshot failure"
       },
-      {
-        status: 503,
-        headers: {
-          "Cache-Control": "no-store"
-        }
-      }
+      { status: 503, headers: { "Cache-Control": "no-store" } }
     );
   }
 }
