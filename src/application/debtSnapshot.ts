@@ -3,16 +3,16 @@ import {
   selectLatestPublishableObservation,
   type DebtObservation,
   type FetchDebtOptions
-} from "../fiscal/debt.js";
+} from "../fiscal/debt";
 import {
   assessDebtFreshness,
   type FreshnessAssessment
-} from "../fiscal/freshness.js";
+} from "../fiscal/freshness";
 import {
   buildTrendSummary,
   type DebtChange
-} from "../fiscal/trends.js";
-import { getPostgresDebtRepository } from "../storage/postgresDebtRepository.js";
+} from "../fiscal/trends";
+import { getPostgresDebtRepository } from "../storage/postgresDebtRepository";
 
 export type DebtSnapshotSource =
   | "database"
