@@ -14,6 +14,7 @@ export async function GET() {
     return NextResponse.json(
       {
         generatedAt: snapshot.generatedAt,
+        dataSource: snapshot.dataSource,
         latest: snapshot.latest,
         freshness: snapshot.freshness,
         trends: snapshot.trends,
