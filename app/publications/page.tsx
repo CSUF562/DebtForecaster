@@ -121,14 +121,20 @@ export default async function PublicationsPage() {
                       </div>
                     ) : null}
 
-                    <dl className="ledger-meta">
-                      <div><dt>Published</dt><dd>{fmtDateTime(record.createdAt)}</dd></div>
-                      <div><dt>Commit</dt><dd><code>{record.release.commitSha ?? "unavailable"}</code></dd></div>
-                      <div><dt>Deployment</dt><dd><code>{record.release.deploymentId ?? "unavailable"}</code></dd></div>
-                      <div><dt>Context records</dt><dd>{record.contextIds.length}</dd></div>
-                      <div><dt>Content hash</dt><dd><code>{record.contentHash}</code></dd></div>
-                      <div><dt>ERC13 protocol</dt><dd>{record.release.erc13ProtocolVersion}</dd></div>
-                    </dl>
+                    <div className="publication-summary">
+                      <span>Published {fmtDateTime(record.createdAt)}</span>
+                      <span>{record.contextIds.length} context records</span>
+                      <span>ERC13 {record.release.erc13ProtocolVersion}</span>
+                    </div>
+
+                    <details className="technical-disclosure">
+                      <summary>Technical provenance</summary>
+                      <dl className="ledger-meta">
+                        <div><dt>Commit</dt><dd><code>{record.release.commitSha ?? "unavailable"}</code></dd></div>
+                        <div><dt>Deployment</dt><dd><code>{record.release.deploymentId ?? "unavailable"}</code></dd></div>
+                        <div><dt>Content hash</dt><dd><code>{record.contentHash}</code></dd></div>
+                      </dl>
+                    </details>
 
                     {older ? (
                       <>
