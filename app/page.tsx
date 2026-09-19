@@ -165,6 +165,7 @@ export default async function HomePage() {
             contextual evidence, modeled projections, hypotheses, and unresolved knowledge.
           </p>
           <p>Uncertainty is preserved when the evidence has not yet justified a stronger conclusion.</p>
+          <p><a className="method-link" href="/methodology">Inspect the methodology, revision policy, or challenge an explanation.</a></p>
         </section>
       </main>
     );
