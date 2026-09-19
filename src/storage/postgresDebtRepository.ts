@@ -164,3 +164,50 @@ export async function withTransaction<T>(
     client.release();
   }
 }
+
+
+export interface IngestionRunSummary {
+  sourceDataset: string;
+  startedAt: string;
+  completedAt: string;
+  status: "success" | "partial" | "failed";
+  recordsReceived: number;
+  recordsInserted: number;
+  recordsRejected: number;
+  errorMessage: string | null;
+  adapterVersion: string;
+}
+
+export async function recordIngestionRun(
+  summary: IngestionRunSummary
+): Promise<void> {
+  const pool = getDatabasePool();
+
+  await pool.query(
+    `
+    INSERT INTO ingestion_runs (
+      source_dataset,
+      started_at,
+      completed_at,
+      status,
+      records_received,
+      records_inserted,
+      records_rejected,
+      error_message,
+      adapter_version
+    )
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+    `,
+    [
+      summary.sourceDataset,
+      summary.startedAt,
+      summary.completedAt,
+      summary.status,
+      summary.recordsReceived,
+      summary.recordsInserted,
+      summary.recordsRejected,
+      summary.errorMessage,
+      summary.adapterVersion
+    ]
+  );
+}
