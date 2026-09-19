@@ -1,0 +1,27 @@
+name: Treasury Ingestion
+
+on:
+  schedule:
+    - cron: "15 23 * * 1-5"
+  workflow_dispatch:
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install
+        run: npm install
+
+      - name: Ingest Treasury observations
+        run: npm run ingest:treasury
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_SSL: require
