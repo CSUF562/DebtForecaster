@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getDebtSnapshot } from "../../../src/application/debtSnapshot";
 import { buildDailyAccountingBrief } from "../../../src/application/dailyBrief";
 import { getContextSnapshot } from "../../../src/application/contextSnapshot";
+import { getPostgresDailyPublicationRepository } from "../../../src/storage/postgresDailyPublicationRepository";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,24 @@ export async function GET() {
       contextSnapshot.items
     );
 
+    let persistence:
+      | "inserted"
+      | "duplicate"
+      | "skipped"
+      | "unavailable" = "unavailable";
+
+    if (process.env.DATABASE_URL && snapshot.latest) {
+      try {
+        const saved = await getPostgresDailyPublicationRepository().save(
+          snapshot.latest.recordDate,
+          brief
+        );
+        persistence = saved.status;
+      } catch (error) {
+        console.warn("Daily publication persistence unavailable:", error);
+      }
+    }
+
     return NextResponse.json(
       {
         generatedAt: snapshot.generatedAt,
@@ -29,6 +48,7 @@ export async function GET() {
         brief: {
           publicationId: brief.publicationId,
           release: brief.release,
+          persistence,
           publicationStatus: brief.publicationStatus,
           narrative: brief.narrative,
           explanation: brief.explanation,
