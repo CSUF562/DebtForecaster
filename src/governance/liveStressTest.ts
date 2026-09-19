@@ -1,7 +1,7 @@
-import { buildSeptember2026ContextBundle } from "../context/currentCaseStudy.js";
-import type { DebtObservation } from "../fiscal/debt.js";
-import { buildDailyAccountingBrief } from "../application/dailyBrief.js";
-import { buildUnknownMateriality } from "../epistemics/materiality.js";
+import { buildSeptember2026ContextBundle } from "../context/currentCaseStudy";
+import type { DebtObservation } from "../fiscal/debt";
+import { buildDailyAccountingBrief } from "../application/dailyBrief";
+import { buildUnknownMateriality } from "../epistemics/materiality";
 
 export interface StressTestResult {
   contextAccepted: number;
