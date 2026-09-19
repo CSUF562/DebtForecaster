@@ -111,7 +111,6 @@ export function buildDailyAccountingBrief(
     context,
     unresolved,
     [],
-    [],
     materiality,
     [],
     [],
