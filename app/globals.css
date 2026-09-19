@@ -300,3 +300,51 @@ h1 {
   text-decoration: none;
   background: rgba(255,255,255,.04);
 }
+
+
+.context-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.context-card {
+  padding: 1.15rem 1.2rem;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: .9rem;
+  background: rgba(154, 113, 188, .045);
+}
+
+.context-card h3 {
+  margin: .85rem 0 .55rem;
+  font-size: 1.05rem;
+}
+
+.context-card p {
+  color: #b4bfce;
+  line-height: 1.55;
+}
+
+.context-card small {
+  color: #8390a4;
+}
+
+.context-meta {
+  display: flex;
+  gap: .65rem;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.materiality-label {
+  font-size: .68rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #9aa7b9;
+}
+
+.context-boundary {
+  margin-bottom: 0;
+  font-size: .86rem;
+  color: #8f9caf !important;
+}
