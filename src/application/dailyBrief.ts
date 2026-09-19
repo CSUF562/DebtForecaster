@@ -10,6 +10,7 @@ import {
 } from "../governance/erc13.js";
 import type { ContextEvidence } from "../context/contextEvidence.js";
 import type { ContestabilityRecord } from "../epistemics/contestability.js";
+import { buildUnknownMateriality, type ContextMateriality } from "../epistemics/materiality.js";
 import {
   createCausationUnresolved,
   type UnresolvedKnowledge
@@ -20,6 +21,8 @@ export interface DailyAccountingBrief {
   priorObservationId: string | null;
   explanation: WhatChangedExplanation | null;
   unresolved: UnresolvedKnowledge[];
+  context: ContextEvidence[];
+  materiality: ContextMateriality[];
   governance: Erc13Assessment | null;
   publicationStatus:
     | "publishable"
@@ -39,6 +42,8 @@ export function buildDailyAccountingBrief(
       priorObservationId: null,
       explanation: null,
       unresolved: [],
+      context: [],
+      materiality: [],
       governance: null,
       publicationStatus: "insufficient-history"
     };
@@ -59,6 +64,8 @@ export function buildDailyAccountingBrief(
       priorObservationId: null,
       explanation: null,
       unresolved: [],
+      context: [],
+      materiality: [],
       governance: null,
       publicationStatus: "insufficient-history"
     };
@@ -82,6 +89,8 @@ export function buildDailyAccountingBrief(
     })
   ];
 
+  const materiality = context.map(buildUnknownMateriality);
+
   const contestability: ContestabilityRecord[] = [
     {
       outputId: `daily-brief-${latest.recordDate}`,
@@ -103,6 +112,7 @@ export function buildDailyAccountingBrief(
     unresolved,
     [],
     [],
+    materiality,
     [],
     [],
     [],
@@ -115,6 +125,8 @@ export function buildDailyAccountingBrief(
     priorObservationId: prior.id,
     explanation,
     unresolved,
+    context,
+    materiality,
     governance,
     publicationStatus: governance.publishable ? "publishable" : "blocked"
   };
