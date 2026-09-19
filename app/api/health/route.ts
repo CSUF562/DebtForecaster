@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getDatabasePool } from "../../../src/storage/postgresDebtRepository.js";
+import { getDatabasePool } from "../../../src/storage/postgresDebtRepository";
 
 export const dynamic = "force-dynamic";
 
