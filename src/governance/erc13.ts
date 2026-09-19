@@ -11,6 +11,10 @@ import type { CorroborationSet } from "../epistemics/corroboration.js";
 import { validateCorroborationSet } from "../epistemics/corroboration.js";
 import type { CounterevidenceReview } from "../epistemics/counterevidence.js";
 import { validateCounterevidenceReview } from "../epistemics/counterevidence.js";
+import type { WordingCalibration } from "../epistemics/wording.js";
+import { validateWordingCalibration } from "../epistemics/wording.js";
+import type { RevisionTrigger } from "../epistemics/revisionTriggers.js";
+import { validateRevisionTrigger } from "../epistemics/revisionTriggers.js";
 
 export interface Erc13GateResult {
   gate:
@@ -23,13 +27,15 @@ export interface Erc13GateResult {
     | "G7-competing-explanations"
     | "G8-materiality"
     | "G9-corroboration-independence"
-    | "G10-counterevidence";
+    | "G10-counterevidence"
+    | "G11-wording-calibration"
+    | "G12-revision-trigger";
   status: "pass" | "fail";
   findings: string[];
 }
 
 export interface Erc13Assessment {
-  protocolVersion: "0.5.0";
+  protocolVersion: "0.6.0";
   publishable: boolean;
   results: Erc13GateResult[];
 }
@@ -41,7 +47,9 @@ export function assessDailyExplanation(
   competingExplanations: CompetingExplanationSet[] = [],
   materiality: ContextMateriality[] = [],
   corroboration: CorroborationSet[] = [],
-  counterevidence: CounterevidenceReview[] = []
+  counterevidence: CounterevidenceReview[] = [],
+  wording: WordingCalibration[] = [],
+  revisionTriggers: RevisionTrigger[] = []
 ): Erc13Assessment {
   const sourceFindings: string[] = [];
   const classificationFindings: string[] = [];
@@ -53,6 +61,8 @@ export function assessDailyExplanation(
   const materialityFindings: string[] = [];
   const corroborationFindings: string[] = [];
   const counterevidenceFindings: string[] = [];
+  const wordingFindings: string[] = [];
+  const revisionFindings: string[] = [];
 
   if (!explanation.currentObservationId || !explanation.priorObservationId) {
     sourceFindings.push("Explanation is missing source observation lineage.");
@@ -142,6 +152,22 @@ export function assessDailyExplanation(
     );
   }
 
+  for (const item of wording) {
+    wordingFindings.push(
+      ...validateWordingCalibration(item).map(
+        finding => `${item.claimId}: ${finding}`
+      )
+    );
+  }
+
+  for (const trigger of revisionTriggers) {
+    revisionFindings.push(
+      ...validateRevisionTrigger(trigger).map(
+        finding => `${trigger.id}: ${finding}`
+      )
+    );
+  }
+
   const results: Erc13GateResult[] = [
     { gate: "G1-source", status: sourceFindings.length === 0 ? "pass" : "fail", findings: sourceFindings },
     { gate: "G2-classification", status: classificationFindings.length === 0 ? "pass" : "fail", findings: classificationFindings },
@@ -152,11 +178,13 @@ export function assessDailyExplanation(
     { gate: "G7-competing-explanations", status: competingExplanationFindings.length === 0 ? "pass" : "fail", findings: competingExplanationFindings },
     { gate: "G8-materiality", status: materialityFindings.length === 0 ? "pass" : "fail", findings: materialityFindings },
     { gate: "G9-corroboration-independence", status: corroborationFindings.length === 0 ? "pass" : "fail", findings: corroborationFindings },
-    { gate: "G10-counterevidence", status: counterevidenceFindings.length === 0 ? "pass" : "fail", findings: counterevidenceFindings }
+    { gate: "G10-counterevidence", status: counterevidenceFindings.length === 0 ? "pass" : "fail", findings: counterevidenceFindings },
+    { gate: "G11-wording-calibration", status: wordingFindings.length === 0 ? "pass" : "fail", findings: wordingFindings },
+    { gate: "G12-revision-trigger", status: revisionFindings.length === 0 ? "pass" : "fail", findings: revisionFindings }
   ];
 
   return {
-    protocolVersion: "0.5.0",
+    protocolVersion: "0.6.0",
     publishable: results.every(result => result.status === "pass"),
     results
   };
