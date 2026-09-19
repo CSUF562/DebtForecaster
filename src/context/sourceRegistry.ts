@@ -1,4 +1,4 @@
-import type { ContextSourceTier } from "./contextEvidence.js";
+import type { ContextSourceTier } from "./contextEvidence";
 
 export interface ContextSourceDefinition {
   id: string;
