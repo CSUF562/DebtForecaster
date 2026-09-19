@@ -4,6 +4,7 @@ import { normalizeTreasuryDebtRow } from "../src/fiscal/debt.js";
 import { explainAccountingChange } from "../src/explanations/whatChanged.js";
 import { assessDailyExplanation } from "../src/governance/erc13.js";
 import type { ContextEvidence } from "../src/context/contextEvidence.js";
+import type { ContestabilityRecord } from "../src/epistemics/contestability.js";
 
 function observation(
   date: string,
@@ -48,17 +49,73 @@ function context(): ContextEvidence {
   };
 }
 
-test("passes a properly sourced accounting explanation with valid context", () => {
-  const result = assessDailyExplanation(explanation(), [context()]);
+function contestability(): ContestabilityRecord {
+  return {
+    outputId: "daily-brief-test",
+    evidenceInspectable: true,
+    assumptionsInspectable: true,
+    unresolvedVisible: true,
+    revisionPathVisible: true,
+    challengePathVisible: true,
+    automatedDecisionBinding: false,
+    humanOverrideAvailable: true,
+    notes:
+      "Test output exposes evidence, assumptions, unresolved knowledge, revision handling, and a challenge path."
+  };
+}
+
+test("passes applicable gates and marks unused conditional gates not-applicable", () => {
+  const result = assessDailyExplanation(
+    explanation(),
+    [context()],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [contestability()]
+  );
+
   assert.equal(result.publishable, true);
-  assert.equal(result.results.every(gate => gate.status === "pass"), true);
+  assert.equal(result.results.some(gate => gate.status === "fail"), false);
+  assert.equal(
+    result.results.find(gate => gate.gate === "G7-competing-explanations")?.status,
+    "not-applicable"
+  );
+  assert.equal(
+    result.results.find(gate => gate.gate === "G13-contestability-agency")?.status,
+    "pass"
+  );
+});
+
+test("fails publication when no contestability record is supplied", () => {
+  const result = assessDailyExplanation(explanation(), [context()]);
+
+  assert.equal(result.publishable, false);
+  assert.equal(
+    result.results.find(gate => gate.gate === "G13-contestability-agency")?.status,
+    "fail"
+  );
 });
 
 test("fails when an observed claim is incorrectly marked causal", () => {
   const value = explanation();
   value.claims[0] = { ...value.claims[0], causal: true };
 
-  const result = assessDailyExplanation(value);
+  const result = assessDailyExplanation(
+    value,
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [contestability()]
+  );
 
   assert.equal(result.publishable, false);
   assert.equal(
@@ -71,7 +128,18 @@ test("fails when a claim loses source lineage", () => {
   const value = explanation();
   value.claims[1] = { ...value.claims[1], sourceObservationIds: [] };
 
-  const result = assessDailyExplanation(value);
+  const result = assessDailyExplanation(
+    value,
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [contestability()]
+  );
 
   assert.equal(result.publishable, false);
   assert.equal(
@@ -82,7 +150,18 @@ test("fails when a claim loses source lineage", () => {
 
 test("fails G4 when a low-tier source is assigned high confidence", () => {
   const item = { ...context(), sourceTier: "other" as const, confidence: "high" as const };
-  const result = assessDailyExplanation(explanation(), [item]);
+  const result = assessDailyExplanation(
+    explanation(),
+    [item],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [contestability()]
+  );
 
   assert.equal(
     result.results.find(gate => gate.gate === "G4-source-quality")?.status,
@@ -92,7 +171,18 @@ test("fails G4 when a low-tier source is assigned high confidence", () => {
 
 test("fails G5 when contextual evidence omits uncertainty", () => {
   const item = { ...context(), uncertaintyNote: "" };
-  const result = assessDailyExplanation(explanation(), [item]);
+  const result = assessDailyExplanation(
+    explanation(),
+    [item],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [contestability()]
+  );
 
   assert.equal(
     result.results.find(gate => gate.gate === "G5-uncertainty-revision")?.status,
