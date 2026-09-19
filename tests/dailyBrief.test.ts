@@ -53,6 +53,13 @@ test("builds a publishable daily brief with structured unresolved causation", ()
   assert.equal(result.publicationStatus, "publishable");
   assert.equal(result.governance?.publishable, true);
   assert.equal(result.unresolved.length, 1);
+  assert.equal(result.context.length, 1);
+  assert.equal(result.materiality.length, 1);
+  assert.equal(result.materiality[0].assessment, "unknown");
+  assert.equal(
+    result.governance?.results.find(gate => gate.gate === "G8-materiality")?.status,
+    "pass"
+  );
   assert.equal(result.unresolved[0].reason, "causation-unresolved");
   assert.equal(result.unresolved[0].resolvable, true);
   assert.ok(result.unresolved[0].resolutionCriteria.length > 0);
