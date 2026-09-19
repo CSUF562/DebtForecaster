@@ -2,12 +2,63 @@
 
 ## Required environment
 
-- Node.js 22
+- Node.js 22 or Docker
 - PostgreSQL
 - `DATABASE_URL`
 - outbound HTTPS access to the U.S. Treasury Fiscal Data API
 
-## First deployment
+## Fastest reproducible local stack
+
+The repository now includes a deployment-neutral Docker setup.
+
+Start PostgreSQL and the application:
+
+```bash
+docker compose up -d db app
+```
+
+Apply the database migration:
+
+```bash
+docker compose --profile tools run --rm migrate
+```
+
+Seed recent Treasury observations:
+
+```bash
+docker compose --profile tools run --rm ingest
+```
+
+Then open:
+
+```
+http://localhost:3000
+```
+
+Health:
+
+```
+http://localhost:3000/api/health
+```
+
+Snapshot:
+
+```
+http://localhost:3000/api/snapshot
+```
+
+Convenience commands are also available through the Makefile:
+
+```bash
+make dev-up
+make migrate
+make ingest
+make logs
+```
+
+The local Compose credentials are development-only and must not be reused in production.
+
+## Non-container deployment
 
 1. Install dependencies:
 
