@@ -183,7 +183,17 @@ export default async function HomePage() {
                   </div>
                   <h3>{item.title}</h3>
                   <p>{item.summary}</p>
-                  <small>{item.sourceName} · {item.eventDate}</small>
+                  <small>
+                    <a
+                      className="source-link"
+                      href={item.sourceUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {item.sourceName}
+                    </a>
+                    {" · "}{item.eventDate}
+                  </small>
                   <p className="context-boundary">{item.uncertaintyNote}</p>
                 </article>
               );
