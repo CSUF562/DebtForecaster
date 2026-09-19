@@ -8,6 +8,7 @@ RUN npm install
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+RUN npm test
 RUN npm run build
 
 FROM base AS runner
