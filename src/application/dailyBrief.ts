@@ -9,6 +9,7 @@ import {
   type Erc13Assessment
 } from "../governance/erc13.js";
 import type { ContextEvidence } from "../context/contextEvidence.js";
+import type { ContestabilityRecord } from "../epistemics/contestability.js";
 import {
   createCausationUnresolved,
   type UnresolvedKnowledge
@@ -81,7 +82,33 @@ export function buildDailyAccountingBrief(
     })
   ];
 
-  const governance = assessDailyExplanation(explanation, context, unresolved);
+  const contestability: ContestabilityRecord[] = [
+    {
+      outputId: `daily-brief-${latest.recordDate}`,
+      evidenceInspectable: true,
+      assumptionsInspectable: true,
+      unresolvedVisible: true,
+      revisionPathVisible: true,
+      challengePathVisible: true,
+      automatedDecisionBinding: false,
+      humanOverrideAvailable: true,
+      notes:
+        "The dashboard exposes evidence class, unresolved knowledge, ERC13 gate status, methodology, revision policy, and a public challenge path."
+    }
+  ];
+
+  const governance = assessDailyExplanation(
+    explanation,
+    context,
+    unresolved,
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    contestability
+  );
 
   return {
     latestObservationId: latest.id,
