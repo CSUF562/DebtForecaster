@@ -61,3 +61,10 @@ Context records should be preserved when revised or superseded. Enclave should l
 The governing principle remains:
 
 **Act when action is necessary, but never surrender the capacity to doubt the model that justified the action.**
+
+
+## Non-production case studies
+
+Static context fixtures and dated case studies are development/test material only. They must not be injected into the public daily snapshot unless each item has been retrieved through a live, provenance-preserving source adapter during the current publication cycle.
+
+Until live context adapters are enabled, production output should publish verified Treasury accounting, derived measures, and explicitly unresolved causal questions with an empty contextual-evidence set rather than filling the gap with static examples.
