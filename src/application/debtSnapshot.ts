@@ -12,9 +12,16 @@ import {
   buildTrendSummary,
   type DebtChange
 } from "../fiscal/trends.js";
+import { getPostgresDebtRepository } from "../storage/postgresDebtRepository.js";
+
+export type DebtSnapshotSource =
+  | "database"
+  | "treasury-live"
+  | "provided-history";
 
 export interface DebtSnapshot {
   generatedAt: string;
+  dataSource: DebtSnapshotSource;
   history: DebtObservation[];
   latest: DebtObservation | null;
   freshness: FreshnessAssessment | null;
@@ -31,17 +38,20 @@ export interface DebtSnapshot {
 
 export interface DebtSnapshotOptions extends FetchDebtOptions {
   now?: Date;
+  preferDatabase?: boolean;
 }
 
 export function buildDebtSnapshotFromHistory(
   history: DebtObservation[],
-  now: Date = new Date()
+  now: Date = new Date(),
+  dataSource: DebtSnapshotSource = "provided-history"
 ): DebtSnapshot {
   const latest = selectLatestPublishableObservation(history);
 
   if (!latest) {
     return {
       generatedAt: now.toISOString(),
+      dataSource,
       history,
       latest: null,
       freshness: null,
@@ -63,6 +73,7 @@ export function buildDebtSnapshotFromHistory(
 
   return {
     generatedAt: now.toISOString(),
+    dataSource,
     history,
     latest,
     freshness,
@@ -76,15 +87,50 @@ export function buildDebtSnapshotFromHistory(
   };
 }
 
+async function readStoredHistory(limit: number): Promise<DebtObservation[]> {
+  if (!process.env.DATABASE_URL) {
+    return [];
+  }
+
+  const repository = getPostgresDebtRepository();
+  return repository.listRecent(limit);
+}
+
 export async function getDebtSnapshot(
   options: DebtSnapshotOptions = {}
 ): Promise<DebtSnapshot> {
   const now = options.now ?? new Date();
+  const pageSize = options.pageSize ?? 45;
+  const preferDatabase = options.preferDatabase ?? true;
+
+  if (preferDatabase && !options.fetchImpl && process.env.DATABASE_URL) {
+    try {
+      const storedHistory = await readStoredHistory(pageSize);
+
+      if (storedHistory.length > 0) {
+        return buildDebtSnapshotFromHistory(
+          storedHistory,
+          now,
+          "database"
+        );
+      }
+    } catch (error) {
+      console.warn(
+        "Enclave database snapshot unavailable; falling back to live Treasury data.",
+        error
+      );
+    }
+  }
+
   const history = await fetchRecentDebtObservations({
     fetchImpl: options.fetchImpl,
-    pageSize: options.pageSize ?? 45,
+    pageSize,
     retrievedAt: options.retrievedAt ?? now
   });
 
-  return buildDebtSnapshotFromHistory(history, now);
+  return buildDebtSnapshotFromHistory(
+    history,
+    now,
+    "treasury-live"
+  );
 }
