@@ -1,31 +1,31 @@
-import { readFile } from "node:fs/promises";
-import { resolve } from "node:path";
-import { getDatabasePool } from "../src/storage/postgresDebtRepository.js";
+import { readdir, readFile } from "node:fs/promises";
+import path from "node:path";
+import { getDatabasePool } from "../src/storage/postgresDebtRepository";
 
 async function main() {
-  const migrationPath = resolve(
-    process.cwd(),
-    "db/migrations/001_debt_observations.sql"
-  );
+  const migrationDir = path.resolve("db/migrations");
+  const files = (await readdir(migrationDir))
+    .filter(file => /^\d+_.*\.sql$/.test(file))
+    .sort();
 
-  const sql = await readFile(migrationPath, "utf8");
   const pool = getDatabasePool();
 
-  await pool.query(sql);
+  try {
+    for (const file of files) {
+      const sql = await readFile(path.join(migrationDir, file), "utf8");
+      await pool.query(sql);
 
-  console.log(
-    JSON.stringify(
-      {
-        migration: "001_debt_observations.sql",
-        status: "applied",
-        completedAt: new Date().toISOString()
-      },
-      null,
-      2
-    )
-  );
-
-  await pool.end();
+      console.log(
+        JSON.stringify({
+          migration: file,
+          status: "applied",
+          completedAt: new Date().toISOString()
+        })
+      );
+    }
+  } finally {
+    await pool.end();
+  }
 }
 
 main().catch(error => {
