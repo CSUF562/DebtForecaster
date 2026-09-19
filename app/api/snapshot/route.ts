@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { getDebtSnapshot } from "../../../src/application/debtSnapshot.js";
-import { buildDailyAccountingBrief } from "../../../src/application/dailyBrief.js";
-import { buildSeptember2026ContextBundle } from "../../../src/context/currentCaseStudy.js";
+import { getDebtSnapshot } from "../../../src/application/debtSnapshot";
+import { buildDailyAccountingBrief } from "../../../src/application/dailyBrief";
+import { buildSeptember2026ContextBundle } from "../../../src/context/currentCaseStudy";
 
 export const dynamic = "force-dynamic";
 
