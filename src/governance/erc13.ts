@@ -5,6 +5,8 @@ import type { UnresolvedKnowledge } from "../epistemics/unresolvedKnowledge.js";
 import { validateUnresolvedKnowledge } from "../epistemics/unresolvedKnowledge.js";
 import type { CompetingExplanationSet } from "../epistemics/hypotheses.js";
 import { validateCompetingExplanationSet } from "../epistemics/hypotheses.js";
+import type { ContextMateriality } from "../epistemics/materiality.js";
+import { validateContextMateriality } from "../epistemics/materiality.js";
 
 export interface Erc13GateResult {
   gate:
@@ -14,13 +16,14 @@ export interface Erc13GateResult {
     | "G4-source-quality"
     | "G5-uncertainty-revision"
     | "G6-unresolved-knowledge"
-    | "G7-competing-explanations";
+    | "G7-competing-explanations"
+    | "G8-materiality";
   status: "pass" | "fail";
   findings: string[];
 }
 
 export interface Erc13Assessment {
-  protocolVersion: "0.3.0";
+  protocolVersion: "0.4.0";
   publishable: boolean;
   results: Erc13GateResult[];
 }
@@ -29,7 +32,8 @@ export function assessDailyExplanation(
   explanation: WhatChangedExplanation,
   context: ContextEvidence[] = [],
   unresolved: UnresolvedKnowledge[] = [],
-  competingExplanations: CompetingExplanationSet[] = []
+  competingExplanations: CompetingExplanationSet[] = [],
+  materiality: ContextMateriality[] = []
 ): Erc13Assessment {
   const sourceFindings: string[] = [];
   const classificationFindings: string[] = [];
@@ -38,6 +42,7 @@ export function assessDailyExplanation(
   const uncertaintyFindings: string[] = [];
   const unresolvedFindings: string[] = [];
   const competingExplanationFindings: string[] = [];
+  const materialityFindings: string[] = [];
 
   if (!explanation.currentObservationId || !explanation.priorObservationId) {
     sourceFindings.push("Explanation is missing source observation lineage.");
@@ -107,6 +112,13 @@ export function assessDailyExplanation(
     );
   }
 
+  for (const item of materiality) {
+    const findings = validateContextMateriality(item);
+    materialityFindings.push(
+      ...findings.map(finding => `${item.contextId}: ${finding}`)
+    );
+  }
+
   const results: Erc13GateResult[] = [
     {
       gate: "G1-source",
@@ -142,11 +154,16 @@ export function assessDailyExplanation(
       gate: "G7-competing-explanations",
       status: competingExplanationFindings.length === 0 ? "pass" : "fail",
       findings: competingExplanationFindings
+    },
+    {
+      gate: "G8-materiality",
+      status: materialityFindings.length === 0 ? "pass" : "fail",
+      findings: materialityFindings
     }
   ];
 
   return {
-    protocolVersion: "0.3.0",
+    protocolVersion: "0.4.0",
     publishable: results.every(result => result.status === "pass"),
     results
   };
