@@ -95,7 +95,7 @@ export default async function HomePage() {
             <h2>Evidence</h2>
             <p>U.S. Department of the Treasury</p>
             <small>
-              Debt to the Penny · adapter {latest.adapterVersion} · validation {latest.validationStatus}
+              Debt to the Penny · {snapshot.dataSource} · adapter {latest.adapterVersion} · validation {latest.validationStatus}
             </small>
           </article>
         </section>
