@@ -2,8 +2,8 @@ import { Pool, type PoolClient, type QueryResultRow } from "pg";
 import type {
   DebtObservation,
   ValidationStatus
-} from "../fiscal/debt.js";
-import type { DebtObservationRepository } from "./debtRepository.js";
+} from "../fiscal/debt";
+import type { DebtObservationRepository } from "./debtRepository";
 
 interface DebtObservationRow extends QueryResultRow {
   id: string;
