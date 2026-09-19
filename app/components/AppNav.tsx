@@ -11,6 +11,7 @@ export function AppNav() {
           <Link href="/">Today</Link>
           <Link href="/history">History</Link>
           <Link href="/forecaster">Forecaster</Link>
+          <Link href="/evidence">Evidence</Link>
           <Link href="/methodology">Methodology</Link>
         </nav>
       </div>
