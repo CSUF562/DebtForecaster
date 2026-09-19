@@ -16,8 +16,14 @@ import {
   createCausationUnresolved,
   type UnresolvedKnowledge
 } from "../epistemics/unresolvedKnowledge";
+import {
+  getReleaseMetadata,
+  type ReleaseMetadata
+} from "./releaseMetadata";
 
 export interface DailyAccountingBrief {
+  publicationId: string | null;
+  release: ReleaseMetadata;
   latestObservationId: string | null;
   priorObservationId: string | null;
   explanation: WhatChangedExplanation | null;
@@ -36,10 +42,13 @@ export function buildDailyAccountingBrief(
   history: DebtObservation[],
   context: ContextEvidence[] = []
 ): DailyAccountingBrief {
+  const release = getReleaseMetadata();
   const latest = selectLatestPublishableObservation(history);
 
   if (!latest) {
     return {
+      publicationId: null,
+      release,
       latestObservationId: null,
       priorObservationId: null,
       explanation: null,
@@ -52,6 +61,10 @@ export function buildDailyAccountingBrief(
     };
   }
 
+  const publicationId = `daily-brief-${latest.recordDate}-${(
+    release.commitSha ?? "local"
+  ).slice(0, 12)}`;
+
   const prior =
     history
       .filter(
@@ -63,6 +76,8 @@ export function buildDailyAccountingBrief(
 
   if (!prior) {
     return {
+      publicationId,
+      release,
       latestObservationId: latest.id,
       priorObservationId: null,
       explanation: null,
@@ -98,7 +113,7 @@ export function buildDailyAccountingBrief(
 
   const contestability: ContestabilityRecord[] = [
     {
-      outputId: `daily-brief-${latest.recordDate}`,
+      outputId: publicationId,
       evidenceInspectable: true,
       assumptionsInspectable: true,
       unresolvedVisible: true,
@@ -107,7 +122,7 @@ export function buildDailyAccountingBrief(
       automatedDecisionBinding: false,
       humanOverrideAvailable: true,
       notes:
-        "The dashboard exposes evidence class, unresolved knowledge, ERC13 gate status, methodology, revision policy, and a public challenge path."
+        "The dashboard exposes evidence class, unresolved knowledge, ERC13 gate status, methodology, revision policy, release provenance, and a public challenge path."
     }
   ];
 
@@ -125,6 +140,8 @@ export function buildDailyAccountingBrief(
   );
 
   return {
+    publicationId,
+    release,
     latestObservationId: latest.id,
     priorObservationId: prior.id,
     explanation,
