@@ -1,20 +1,20 @@
-import type { DebtObservation } from "../fiscal/debt.js";
-import { selectLatestPublishableObservation } from "../fiscal/debt.js";
+import type { DebtObservation } from "../fiscal/debt";
+import { selectLatestPublishableObservation } from "../fiscal/debt";
 import {
   explainAccountingChange,
   type WhatChangedExplanation
-} from "../explanations/whatChanged.js";
+} from "../explanations/whatChanged";
 import {
   assessDailyExplanation,
   type Erc13Assessment
-} from "../governance/erc13.js";
-import type { ContextEvidence } from "../context/contextEvidence.js";
-import type { ContestabilityRecord } from "../epistemics/contestability.js";
-import { buildUnknownMateriality, type ContextMateriality } from "../epistemics/materiality.js";
+} from "../governance/erc13";
+import type { ContextEvidence } from "../context/contextEvidence";
+import type { ContestabilityRecord } from "../epistemics/contestability";
+import { buildUnknownMateriality, type ContextMateriality } from "../epistemics/materiality";
 import {
   createCausationUnresolved,
   type UnresolvedKnowledge
-} from "../epistemics/unresolvedKnowledge.js";
+} from "../epistemics/unresolvedKnowledge";
 
 export interface DailyAccountingBrief {
   latestObservationId: string | null;
