@@ -121,10 +121,7 @@ export class PostgresContextEvidenceRepository {
       validationNotes.length === 0 ? "pass" : "fail";
 
     if (validationStatus === "fail") {
-      return {
-        status: "rejected",
-        record: null
-      };
+      return { status: "rejected", record: null };
     }
 
     const contentHash = hashContextEvidence(evidence);
@@ -145,24 +142,10 @@ export class PostgresContextEvidenceRepository {
       const inserted = await client.query<ContextRow>(
         `
         INSERT INTO context_evidence_versions (
-          version_id,
-          evidence_id,
-          source_key,
-          event_date,
-          title,
-          summary,
-          source_name,
-          source_url,
-          source_tier,
-          retrieved_at,
-          confidence,
-          causal_claim,
-          uncertainty_note,
-          content_hash,
-          revision_of_version_id,
-          superseded_by_version_id,
-          validation_status,
-          validation_notes
+          version_id, evidence_id, source_key, event_date, title, summary,
+          source_name, source_url, source_tier, retrieved_at, confidence,
+          causal_claim, uncertainty_note, content_hash, revision_of_version_id,
+          superseded_by_version_id, validation_status, validation_notes
         )
         VALUES (
           $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,NULL,$16,$17::jsonb
@@ -239,6 +222,24 @@ export class PostgresContextEvidenceRepository {
       ORDER BY source_key, event_date DESC, retrieved_at DESC
       `,
       [asOfDate]
+    );
+
+    return result.rows.map(mapRow);
+  }
+
+  async listLedger(limit = 100): Promise<PersistedContextEvidence[]> {
+    if (!Number.isInteger(limit) || limit < 1 || limit > 500) {
+      throw new Error("Evidence ledger limit must be between 1 and 500.");
+    }
+
+    const result = await getDatabasePool().query<ContextRow>(
+      `
+      SELECT *
+      FROM context_evidence_versions
+      ORDER BY event_date DESC, retrieved_at DESC
+      LIMIT $1
+      `,
+      [limit]
     );
 
     return result.rows.map(mapRow);
