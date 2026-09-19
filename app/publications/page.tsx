@@ -118,7 +118,8 @@ export default async function PublicationsPage() {
 
                         <h4>What remained unresolved</h4>
                         <p>{record.narrative.unresolved}</p>
-                      </div>
+                        </div>
+                      </>
                     ) : null}
 
                     <dl className="ledger-meta">
@@ -131,7 +132,16 @@ export default async function PublicationsPage() {
                     </dl>
 
                     {older ? (
-                      <div className="publication-diff">
+                      <>
+                        <p>
+                          <a
+                            className="method-link"
+                            href={`/compare-publications?left=${encodeURIComponent(record.publicationId)}&right=${encodeURIComponent(older.publicationId)}`}
+                          >
+                            Compare this version with the previous archived version
+                          </a>
+                        </p>
+                        <div className="publication-diff">
                         <strong>Changed from previous archived version</strong>
                         {changes.length > 0 ? (
                           <ul>
