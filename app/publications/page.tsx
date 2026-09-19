@@ -118,8 +118,7 @@ export default async function PublicationsPage() {
 
                         <h4>What remained unresolved</h4>
                         <p>{record.narrative.unresolved}</p>
-                        </div>
-                      </>
+                      </div>
                     ) : null}
 
                     <dl className="ledger-meta">
@@ -142,15 +141,16 @@ export default async function PublicationsPage() {
                           </a>
                         </p>
                         <div className="publication-diff">
-                        <strong>Changed from previous archived version</strong>
-                        {changes.length > 0 ? (
-                          <ul>
-                            {changes.map(change => <li key={change}>{change}</li>)}
-                          </ul>
-                        ) : (
-                          <p>No material archived-field differences detected.</p>
-                        )}
-                      </div>
+                          <strong>Changed from previous archived version</strong>
+                          {changes.length > 0 ? (
+                            <ul>
+                              {changes.map(change => <li key={change}>{change}</li>)}
+                            </ul>
+                          ) : (
+                            <p>No material archived-field differences detected.</p>
+                          )}
+                        </div>
+                      </>
                     ) : null}
                   </article>
                 );
