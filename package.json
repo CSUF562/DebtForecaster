@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "smoke:treasury": "tsx scripts/treasury-smoke.ts",
     "ingest:treasury": "tsx scripts/ingest-treasury.ts",
-    "db:migrate": "tsx scripts/migrate.ts"
+    "db:migrate": "tsx scripts/migrate.ts",
+    "smoke:app": "tsx scripts/app-smoke.ts"
   },
   "dependencies": {
     "next": "^15.5.0",
