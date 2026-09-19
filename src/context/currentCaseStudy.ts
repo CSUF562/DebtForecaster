@@ -1,5 +1,5 @@
-import type { ContextEvidence } from "./contextEvidence.js";
-import { assembleDailyContext } from "./contextAssembler.js";
+import type { ContextEvidence } from "./contextEvidence";
+import { assembleDailyContext } from "./contextAssembler";
 
 export interface LiveContextCaseStudy {
   id: string;
