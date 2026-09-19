@@ -3,6 +3,7 @@ import { getDebtSnapshot } from "../../../src/application/debtSnapshot";
 import { buildDailyAccountingBrief } from "../../../src/application/dailyBrief";
 import { fetchTreasuryYieldCurveContext } from "../../../src/context/treasuryYieldCurve";
 import { fetchCboMonthlyBudgetContext } from "../../../src/context/cboMonthlyBudget";
+import { fetchFedFomcContext } from "../../../src/context/fedFomc";
 import type { ContextEvidence } from "../../../src/context/contextEvidence";
 
 export const dynamic = "force-dynamic";
@@ -22,7 +23,8 @@ export async function GET() {
     if (!snapshot.latest) {
       contextStatus.push(
         { source: "Treasury daily par yield curve", status: "not-applicable" },
-        { source: "CBO Monthly Budget Review", status: "not-applicable" }
+        { source: "CBO Monthly Budget Review", status: "not-applicable" },
+        { source: "Federal Reserve FOMC statement", status: "not-applicable" }
       );
     } else {
       const sources = [
@@ -37,6 +39,13 @@ export async function GET() {
           name: "CBO Monthly Budget Review",
           run: () =>
             fetchCboMonthlyBudgetContext({
+              asOfDate: snapshot.latest!.recordDate
+            })
+        },
+        {
+          name: "Federal Reserve FOMC statement",
+          run: () =>
+            fetchFedFomcContext({
               asOfDate: snapshot.latest!.recordDate
             })
         }
