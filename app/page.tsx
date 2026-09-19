@@ -114,6 +114,27 @@ export default async function HomePage() {
 
           {dailyBrief.explanation && dailyBrief.publicationStatus === "publishable" ? (
             <>
+              {dailyBrief.narrative && (
+                <article className="daily-narrative">
+                  <p className="eyebrow">EVIDENCE-CALIBRATED NARRATIVE</p>
+                  <h3>What Treasury shows</h3>
+                  <p>{dailyBrief.narrative.accounting}</p>
+
+                  <h3>Relevant surrounding context</h3>
+                  <p>
+                    {dailyBrief.narrative.context ??
+                      "No verified contextual record is currently available for this debt date."}
+                  </p>
+
+                  <h3>What remains unresolved</h3>
+                  <p>{dailyBrief.narrative.unresolved}</p>
+
+                  <p className="context-boundary">
+                    {dailyBrief.narrative.evidenceBoundary}
+                  </p>
+                </article>
+              )}
+
               <div className="claims">
                 {dailyBrief.explanation.claims.map(claim => (
                   <article className="claim" key={claim.id}>
@@ -242,7 +263,8 @@ export default async function HomePage() {
             contextual evidence, modeled projections, hypotheses, and unresolved knowledge.
           </p>
           <p>Uncertainty is preserved when the evidence has not yet justified a stronger conclusion.</p>
-          <p><a className="method-link" href="/evidence">Inspect the Evidence Ledger and source revision history.</a></p>\n          <p><a className="method-link" href="/methodology">Inspect the methodology, revision policy, or challenge an explanation.</a></p>
+          <p><a className="method-link" href="/evidence">Inspect the Evidence Ledger and source revision history.</a></p>
+          <p><a className="method-link" href="/methodology">Inspect the methodology, revision policy, or challenge an explanation.</a></p>
         </section>
       </main>
     );
