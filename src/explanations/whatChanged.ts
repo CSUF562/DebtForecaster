@@ -1,5 +1,5 @@
-import type { DebtObservation } from "../fiscal/debt.js";
-import { deriveDebtChange, type DebtChange } from "../fiscal/trends.js";
+import type { DebtObservation } from "../fiscal/debt";
+import { deriveDebtChange, type DebtChange } from "../fiscal/trends";
 
 export type ExplanationEvidenceClass =
   | "observed"
