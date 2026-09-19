@@ -9,6 +9,7 @@ export function AppNav() {
         </Link>
         <nav className="main-nav" aria-label="Primary navigation">
           <Link href="/">Today</Link>
+          <Link href="/learn">Learn</Link>
           <Link href="/history">History</Link>
           <Link href="/publications">Archive</Link>
           <Link href="/forecaster">Forecaster</Link>
