@@ -719,3 +719,73 @@ h1 {
     gap: .25rem;
   }
 }
+
+
+.publication-archive {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.publication-day {
+  display: grid;
+  gap: .85rem;
+}
+
+.publication-day-header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: .65rem;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.publication-day-header h3 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.publication-day-header > span {
+  color: #8794a8;
+  font-size: .75rem;
+}
+
+.publication-card {
+  background: rgba(94,129,172,.035);
+}
+
+.publication-narrative {
+  display: grid;
+  gap: .35rem;
+  margin-top: 1rem;
+}
+
+.publication-narrative h4 {
+  margin: .75rem 0 0;
+  color: #d7e0eb;
+  font-size: .8rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.publication-narrative p {
+  margin: 0;
+}
+
+.publication-diff {
+  margin-top: 1rem;
+  padding: .9rem 1rem;
+  border: 1px solid rgba(193,133,53,.16);
+  border-radius: .75rem;
+  background: rgba(193,133,53,.045);
+  color: #aeb9ca;
+  font-size: .82rem;
+}
+
+.publication-diff strong {
+  color: #d7e0eb;
+}
+
+.publication-diff ul {
+  margin-bottom: 0;
+}
