@@ -141,6 +141,22 @@ export class PostgresDailyPublicationRepository {
     };
   }
 
+  async getById(
+    publicationId: string
+  ): Promise<PersistedDailyPublication | null> {
+    const result = await getDatabasePool().query<PublicationRow>(
+      `
+      SELECT *
+      FROM daily_publications
+      WHERE publication_id = $1
+      LIMIT 1
+      `,
+      [publicationId]
+    );
+
+    return result.rows[0] ? mapRow(result.rows[0]) : null;
+  }
+
   async listByDate(
     recordDate: string
   ): Promise<PersistedDailyPublication[]> {
