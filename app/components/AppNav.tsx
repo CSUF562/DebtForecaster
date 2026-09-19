@@ -10,6 +10,7 @@ export function AppNav() {
         <nav className="main-nav" aria-label="Primary navigation">
           <Link href="/">Today</Link>
           <Link href="/history">History</Link>
+          <Link href="/publications">Archive</Link>
           <Link href="/forecaster">Forecaster</Link>
           <Link href="/evidence">Evidence</Link>
           <Link href="/methodology">Methodology</Link>
