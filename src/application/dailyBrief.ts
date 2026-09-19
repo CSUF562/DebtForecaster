@@ -10,6 +10,7 @@ import {
 } from "../governance/erc13";
 import type { ContextEvidence } from "../context/contextEvidence";
 import type { ContestabilityRecord } from "../epistemics/contestability";
+import { buildDailyNarrative, type DailyNarrative } from "../explanations/dailyNarrative";
 import { buildUnknownMateriality, type ContextMateriality } from "../epistemics/materiality";
 import {
   createCausationUnresolved,
@@ -20,6 +21,7 @@ export interface DailyAccountingBrief {
   latestObservationId: string | null;
   priorObservationId: string | null;
   explanation: WhatChangedExplanation | null;
+  narrative: DailyNarrative | null;
   unresolved: UnresolvedKnowledge[];
   context: ContextEvidence[];
   materiality: ContextMateriality[];
@@ -41,6 +43,7 @@ export function buildDailyAccountingBrief(
       latestObservationId: null,
       priorObservationId: null,
       explanation: null,
+      narrative: null,
       unresolved: [],
       context: [],
       materiality: [],
@@ -63,6 +66,7 @@ export function buildDailyAccountingBrief(
       latestObservationId: latest.id,
       priorObservationId: null,
       explanation: null,
+      narrative: null,
       unresolved: [],
       context: [],
       materiality: [],
@@ -90,6 +94,7 @@ export function buildDailyAccountingBrief(
   ];
 
   const materiality = context.map(buildUnknownMateriality);
+  const narrativeResult = buildDailyNarrative(explanation, context, unresolved);
 
   const contestability: ContestabilityRecord[] = [
     {
@@ -114,7 +119,7 @@ export function buildDailyAccountingBrief(
     materiality,
     [],
     [],
-    [],
+    narrativeResult.wording,
     [],
     contestability
   );
@@ -123,6 +128,7 @@ export function buildDailyAccountingBrief(
     latestObservationId: latest.id,
     priorObservationId: prior.id,
     explanation,
+    narrative: narrativeResult.narrative,
     unresolved,
     context,
     materiality,
