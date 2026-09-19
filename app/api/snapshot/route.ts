@@ -77,6 +77,21 @@ export async function GET() {
     }
 
     const brief = buildDailyAccountingBrief(snapshot.history, context);
+    const availableContextSources = contextStatus.filter(
+      item => item.status === "available"
+    ).length;
+    const contextCoverage = {
+      available: availableContextSources,
+      total: contextStatus.length,
+      status:
+        availableContextSources === contextStatus.length && contextStatus.length > 0
+          ? "complete"
+          : availableContextSources > 0
+            ? "partial"
+            : contextStatus.length > 0
+              ? "unavailable"
+              : "not-applicable"
+    };
 
     return NextResponse.json(
       {
@@ -87,6 +102,7 @@ export async function GET() {
         trends: snapshot.trends,
         publication: snapshot.publication,
         contextStatus,
+        contextCoverage,
         brief: {
           publicationStatus: brief.publicationStatus,
           explanation: brief.explanation,
