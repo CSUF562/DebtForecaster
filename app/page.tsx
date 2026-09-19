@@ -1,5 +1,6 @@
 import { getDebtSnapshot } from "../src/application/debtSnapshot.js";
 import { buildDailyAccountingBrief } from "../src/application/dailyBrief.js";
+import { buildSeptember2026ContextBundle } from "../src/context/currentCaseStudy.js";
 
 export const dynamic = "force-dynamic";
 
@@ -37,7 +38,8 @@ export default async function HomePage() {
 
     const latest = snapshot.latest;
     const freshness = snapshot.freshness;
-    const dailyBrief = buildDailyAccountingBrief(snapshot.history);
+    const contextBundle = buildSeptember2026ContextBundle();
+    const dailyBrief = buildDailyAccountingBrief(snapshot.history, contextBundle.items);
 
     return (
       <main className="shell">
@@ -157,6 +159,42 @@ export default async function HomePage() {
               A prior validated Treasury observation is required before Enclave can explain the daily accounting change.
             </p>
           ) : null}
+        </section>
+
+        <section className="what-changed">
+          <div className="section-heading">
+            <p className="eyebrow">VERIFIED CONTEXT</p>
+            <h2>What Else Was Happening?</h2>
+          </div>
+
+          <div className="context-grid">
+            {dailyBrief.context.map(item => {
+              const materiality = dailyBrief.materiality.find(
+                assessment => assessment.contextId === item.id
+              );
+
+              return (
+                <article className="context-card" key={item.id}>
+                  <div className="context-meta">
+                    <span className="claim-label contextual">contextual</span>
+                    <span className="materiality-label">
+                      materiality: {materiality?.assessment ?? "unknown"}
+                    </span>
+                  </div>
+                  <h3>{item.title}</h3>
+                  <p>{item.summary}</p>
+                  <small>{item.sourceName} · {item.eventDate}</small>
+                  <p className="context-boundary">{item.uncertaintyNote}</p>
+                </article>
+              );
+            })}
+          </div>
+
+          <p className="boundary">
+            These events are included because they are relevant to the surrounding fiscal,
+            monetary, or financing environment. Their presence does not establish that they
+            caused the daily debt movement.
+          </p>
         </section>
 
         <section className="method">
