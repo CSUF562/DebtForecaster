@@ -1,6 +1,6 @@
 import { getDebtSnapshot } from "../src/application/debtSnapshot";
 import { buildDailyAccountingBrief } from "../src/application/dailyBrief";
-import { buildSeptember2026ContextBundle } from "../src/context/currentCaseStudy";
+import { getContextSnapshot } from "../src/application/contextSnapshot";
 
 export const dynamic = "force-dynamic";
 
@@ -38,8 +38,8 @@ export default async function HomePage() {
 
     const latest = snapshot.latest;
     const freshness = snapshot.freshness;
-    const contextBundle = buildSeptember2026ContextBundle();
-    const dailyBrief = buildDailyAccountingBrief(snapshot.history, contextBundle.items);
+    const contextSnapshot = await getContextSnapshot(latest.recordDate);
+    const dailyBrief = buildDailyAccountingBrief(snapshot.history, contextSnapshot.items);
 
     return (
       <main className="shell">
@@ -167,6 +167,35 @@ export default async function HomePage() {
             <h2>What Else Was Happening?</h2>
           </div>
 
+          <div className="evidence-coverage" aria-label="Evidence coverage">
+            <div>
+              <strong>
+                {contextSnapshot.coverage.available}/{contextSnapshot.coverage.total}
+              </strong>
+              <span>primary context sources available</span>
+            </div>
+            <div>
+              <strong>{contextSnapshot.coverage.live}</strong>
+              <span>verified live this request</span>
+            </div>
+            <div>
+              <strong>{contextSnapshot.coverage.status}</strong>
+              <span>coverage state</span>
+            </div>
+          </div>
+
+          <div className="source-status-list">
+            {contextSnapshot.status.map(source => (
+              <div className="source-status" key={source.sourceKey}>
+                <span>{source.source}</span>
+                <span>
+                  {source.status}
+                  {source.origin ? ` · ${source.origin}` : ""}
+                </span>
+              </div>
+            ))}
+          </div>
+
           <div className="context-grid">
             {dailyBrief.context.map(item => {
               const materiality = dailyBrief.materiality.find(
@@ -213,7 +242,7 @@ export default async function HomePage() {
             contextual evidence, modeled projections, hypotheses, and unresolved knowledge.
           </p>
           <p>Uncertainty is preserved when the evidence has not yet justified a stronger conclusion.</p>
-          <p><a className="method-link" href="/methodology">Inspect the methodology, revision policy, or challenge an explanation.</a></p>
+          <p><a className="method-link" href="/evidence">Inspect the Evidence Ledger and source revision history.</a></p>\n          <p><a className="method-link" href="/methodology">Inspect the methodology, revision policy, or challenge an explanation.</a></p>
         </section>
       </main>
     );
