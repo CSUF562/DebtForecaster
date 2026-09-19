@@ -33,7 +33,7 @@ export interface Erc13GateResult {
     | "G11-wording-calibration"
     | "G12-revision-trigger"
     | "G13-contestability-agency";
-  status: "pass" | "fail";
+  status: "pass" | "fail" | "not-applicable";
   findings: string[];
 }
 
@@ -173,6 +173,12 @@ export function assessDailyExplanation(
     );
   }
 
+  if (contestability.length === 0) {
+    contestabilityFindings.push(
+      "Publishable output requires at least one contestability record."
+    );
+  }
+
   for (const record of contestability) {
     contestabilityFindings.push(
       ...validateContestability(record).map(
@@ -188,18 +194,18 @@ export function assessDailyExplanation(
     { gate: "G4-source-quality", status: sourceQualityFindings.length === 0 ? "pass" : "fail", findings: sourceQualityFindings },
     { gate: "G5-uncertainty-revision", status: uncertaintyFindings.length === 0 ? "pass" : "fail", findings: uncertaintyFindings },
     { gate: "G6-unresolved-knowledge", status: unresolvedFindings.length === 0 ? "pass" : "fail", findings: unresolvedFindings },
-    { gate: "G7-competing-explanations", status: competingExplanationFindings.length === 0 ? "pass" : "fail", findings: competingExplanationFindings },
-    { gate: "G8-materiality", status: materialityFindings.length === 0 ? "pass" : "fail", findings: materialityFindings },
-    { gate: "G9-corroboration-independence", status: corroborationFindings.length === 0 ? "pass" : "fail", findings: corroborationFindings },
-    { gate: "G10-counterevidence", status: counterevidenceFindings.length === 0 ? "pass" : "fail", findings: counterevidenceFindings },
-    { gate: "G11-wording-calibration", status: wordingFindings.length === 0 ? "pass" : "fail", findings: wordingFindings },
-    { gate: "G12-revision-trigger", status: revisionFindings.length === 0 ? "pass" : "fail", findings: revisionFindings },
+    { gate: "G7-competing-explanations", status: competingExplanations.length === 0 ? "not-applicable" : competingExplanationFindings.length === 0 ? "pass" : "fail", findings: competingExplanationFindings },
+    { gate: "G8-materiality", status: materiality.length === 0 ? "not-applicable" : materialityFindings.length === 0 ? "pass" : "fail", findings: materialityFindings },
+    { gate: "G9-corroboration-independence", status: corroboration.length === 0 ? "not-applicable" : corroborationFindings.length === 0 ? "pass" : "fail", findings: corroborationFindings },
+    { gate: "G10-counterevidence", status: counterevidence.length === 0 ? "not-applicable" : counterevidenceFindings.length === 0 ? "pass" : "fail", findings: counterevidenceFindings },
+    { gate: "G11-wording-calibration", status: wording.length === 0 ? "not-applicable" : wordingFindings.length === 0 ? "pass" : "fail", findings: wordingFindings },
+    { gate: "G12-revision-trigger", status: revisionTriggers.length === 0 ? "not-applicable" : revisionFindings.length === 0 ? "pass" : "fail", findings: revisionFindings },
     { gate: "G13-contestability-agency", status: contestabilityFindings.length === 0 ? "pass" : "fail", findings: contestabilityFindings }
   ];
 
   return {
     protocolVersion: "1.0.0",
-    publishable: results.every(result => result.status === "pass"),
+    publishable: results.every(result => result.status !== "fail"),
     results
   };
 }
