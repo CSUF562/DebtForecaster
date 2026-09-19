@@ -348,3 +348,9 @@ h1 {
   font-size: .86rem;
   color: #8f9caf !important;
 }
+
+
+.source-link {
+  color: inherit;
+  text-underline-offset: .18rem;
+}
