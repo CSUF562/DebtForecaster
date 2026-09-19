@@ -1,4 +1,5 @@
 import { getPostgresContextEvidenceRepository } from "../../src/storage/postgresContextRepository";
+import { getReleaseMetadata } from "../../src/application/releaseMetadata";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +26,7 @@ export default async function EvidencePage() {
   const records = process.env.DATABASE_URL
     ? await getPostgresContextEvidenceRepository().listLedger(200)
     : [];
+  const release = getReleaseMetadata();
 
   const current = records.filter(record => !record.supersededByVersionId);
   const superseded = records.filter(record => Boolean(record.supersededByVersionId));
@@ -36,9 +38,34 @@ export default async function EvidencePage() {
         <h1>What Enclave knew, when it knew it.</h1>
         <p className="method">
           This ledger exposes persisted contextual evidence, retrieval times,
-          validation state, content hashes, and revision lineage. A later source
-          revision does not erase the earlier version.
+          validation state, content hashes, revision lineage, and the software
+          release that produced the current interpretation.
         </p>
+      </section>
+
+      <section className="what-changed">
+        <div className="section-heading">
+          <p className="eyebrow">RELEASE PROVENANCE</p>
+          <h2>Software traceability</h2>
+        </div>
+
+        <article className="ledger-card">
+          <dl className="ledger-meta">
+            <div><dt>Commit</dt><dd><code>{release.commitSha ?? "unavailable"}</code></dd></div>
+            <div><dt>Branch</dt><dd>{release.branch ?? "unavailable"}</dd></div>
+            <div><dt>Deployment</dt><dd><code>{release.deploymentId ?? "unavailable"}</code></dd></div>
+            <div><dt>Snapshot</dt><dd><code>{release.snapshotId ?? "unavailable"}</code></dd></div>
+            <div><dt>Environment</dt><dd>{release.environmentName ?? "unavailable"}</dd></div>
+            <div><dt>Service</dt><dd>{release.serviceName ?? "unavailable"}</dd></div>
+            <div><dt>ERC13 protocol</dt><dd>{release.erc13ProtocolVersion}</dd></div>
+            <div><dt>Release gate</dt><dd>{release.productionTestGate}</dd></div>
+          </dl>
+          <p className="context-boundary">
+            Production images are configured to run the full test suite before
+            the application build. Release metadata identifies the software
+            version that rendered this ledger.
+          </p>
+        </article>
       </section>
 
       <section className="what-changed">
