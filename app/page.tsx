@@ -55,12 +55,27 @@ export default async function HomePage() {
           <p className="debt">{formatDollars(latest.totalPublicDebtOutstanding)}</p>
           <p className="asof">Treasury record date: {latest.recordDate}</p>
 
+          <div className="trend-strip" aria-label="Recent debt changes">
+            <div>
+              <span>Previous observation</span>
+              <strong>{changeLabel(snapshot.trends.previous?.absoluteChange)}</strong>
+            </div>
+            <div>
+              <span>7-day change</span>
+              <strong>{changeLabel(snapshot.trends.sevenDay?.absoluteChange)}</strong>
+            </div>
+            <div>
+              <span>30-day change</span>
+              <strong>{changeLabel(snapshot.trends.thirtyDay?.absoluteChange)}</strong>
+            </div>
+          </div>
+
           {!snapshot.publication.canPresentAsCurrent && (
             <p className="status warning">{snapshot.publication.reason}</p>
           )}
         </section>
 
-        <section className="grid" aria-label="Debt components and recent changes">
+        <section className="grid primary-grid" aria-label="Debt components and evidence">
           <article className="card">
             <h2>Held by the Public</h2>
             <p>{formatDollars(latest.debtHeldByPublic)}</p>
@@ -73,29 +88,11 @@ export default async function HomePage() {
             <small>Observed Treasury accounting</small>
           </article>
 
-          <article className="card">
-            <h2>Previous Observation</h2>
-            <p>{changeLabel(snapshot.trends.previous?.absoluteChange)}</p>
-            <small>Derived from cited observations</small>
-          </article>
-
-          <article className="card">
-            <h2>7-Day Change</h2>
-            <p>{changeLabel(snapshot.trends.sevenDay?.absoluteChange)}</p>
-            <small>Derived, not a causal explanation</small>
-          </article>
-
-          <article className="card">
-            <h2>30-Day Change</h2>
-            <p>{changeLabel(snapshot.trends.thirtyDay?.absoluteChange)}</p>
-            <small>Derived, not a forecast</small>
-          </article>
-
           <article className="card evidence">
-            <h2>Evidence</h2>
-            <p>U.S. Department of the Treasury</p>
+            <h2>Primary Evidence</h2>
+            <p>U.S. Treasury</p>
             <small>
-              Debt to the Penny · {snapshot.dataSource} · adapter {latest.adapterVersion} · validation {latest.validationStatus}
+              Debt to the Penny · {snapshot.dataSource} · validation {latest.validationStatus}
             </small>
           </article>
         </section>
@@ -117,17 +114,28 @@ export default async function HomePage() {
               {dailyBrief.narrative && (
                 <article className="daily-narrative">
                   <p className="eyebrow">EVIDENCE-CALIBRATED NARRATIVE</p>
-                  <h3>What Treasury shows</h3>
-                  <p>{dailyBrief.narrative.accounting}</p>
+                  <div className="narrative-grid">
+                    <section className="narrative-panel">
+                      <span className="claim-label observed">observed</span>
+                      <h3>What Treasury shows</h3>
+                      <p>{dailyBrief.narrative.accounting}</p>
+                    </section>
 
-                  <h3>Relevant surrounding context</h3>
-                  <p>
-                    {dailyBrief.narrative.context ??
-                      "No verified contextual record is currently available for this debt date."}
-                  </p>
+                    <section className="narrative-panel">
+                      <span className="claim-label contextual">context</span>
+                      <h3>Relevant surrounding context</h3>
+                      <p>
+                        {dailyBrief.narrative.context ??
+                          "No verified contextual record is currently available for this debt date."}
+                      </p>
+                    </section>
 
-                  <h3>What remains unresolved</h3>
-                  <p>{dailyBrief.narrative.unresolved}</p>
+                    <section className="narrative-panel">
+                      <span className="claim-label unresolved">unresolved</span>
+                      <h3>What remains unresolved</h3>
+                      <p>{dailyBrief.narrative.unresolved}</p>
+                    </section>
+                  </div>
 
                   <p className="context-boundary">
                     {dailyBrief.narrative.evidenceBoundary}
@@ -135,16 +143,19 @@ export default async function HomePage() {
                 </article>
               )}
 
-              <div className="claims">
-                {dailyBrief.explanation.claims.map(claim => (
-                  <article className="claim" key={claim.id}>
-                    <span className={`claim-label ${claim.evidenceClass}`}>
-                      {claim.evidenceClass}
-                    </span>
-                    <p>{claim.text}</p>
-                  </article>
-                ))}
-              </div>
+              <details className="technical-disclosure">
+                <summary>Inspect accounting claims</summary>
+                <div className="claims">
+                  {dailyBrief.explanation.claims.map(claim => (
+                    <article className="claim" key={claim.id}>
+                      <span className={`claim-label ${claim.evidenceClass}`}>
+                        {claim.evidenceClass}
+                      </span>
+                      <p>{claim.text}</p>
+                    </article>
+                  ))}
+                </div>
+              </details>
 
               <p className="boundary">{dailyBrief.explanation.evidenceBoundary}</p>
 
@@ -165,14 +176,16 @@ export default async function HomePage() {
               ))}
 
               {dailyBrief.governance && (
-                <div className="governance">
-                  <strong>ERC13 publication gates</strong>
+                <details className="governance technical-disclosure">
+                  <summary>
+                    ERC13 publication gates · {dailyBrief.governance.results.filter(result => result.status === "pass").length}/{dailyBrief.governance.results.length} passed
+                  </summary>
                   <span>
                     {dailyBrief.governance.results
                       .map(result => `${result.gate}: ${result.status}`)
                       .join(" · ")}
                   </span>
-                </div>
+                </details>
               )}
             </>
           ) : dailyBrief.publicationStatus === "insufficient-history" ? (
@@ -205,17 +218,20 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="source-status-list">
-            {contextSnapshot.status.map(source => (
-              <div className="source-status" key={source.sourceKey}>
-                <span>{source.source}</span>
-                <span>
-                  {source.status}
-                  {source.origin ? ` · ${source.origin}` : ""}
-                </span>
-              </div>
-            ))}
-          </div>
+          <details className="technical-disclosure source-disclosure">
+            <summary>Inspect source availability</summary>
+            <div className="source-status-list">
+              {contextSnapshot.status.map(source => (
+                <div className="source-status" key={source.sourceKey}>
+                  <span>{source.source}</span>
+                  <span>
+                    {source.status}
+                    {source.origin ? ` · ${source.origin}` : ""}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </details>
 
           <div className="context-grid">
             {dailyBrief.context.map(item => {
