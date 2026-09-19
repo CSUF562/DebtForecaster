@@ -789,3 +789,146 @@ h1 {
 .publication-diff ul {
   margin-bottom: 0;
 }
+
+
+/* Visual hierarchy pass: keep the primary story visible and technical detail inspectable. */
+.trend-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .65rem;
+  margin-top: 1.35rem;
+}
+
+.trend-strip > div {
+  padding: .85rem 1rem;
+  border-top: 1px solid rgba(255,255,255,.12);
+}
+
+.trend-strip span {
+  display: block;
+  margin-bottom: .3rem;
+  color: #8794a8;
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+
+.trend-strip strong {
+  font-size: clamp(1rem, 2.2vw, 1.35rem);
+  font-variant-numeric: tabular-nums;
+}
+
+.primary-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.daily-narrative {
+  margin-bottom: 1rem;
+}
+
+.narrative-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .8rem;
+}
+
+.narrative-panel {
+  padding: 1rem;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: .85rem;
+  background: rgba(255,255,255,.018);
+}
+
+.narrative-panel h3 {
+  margin: .75rem 0 .45rem;
+  font-size: 1rem;
+}
+
+.narrative-panel p {
+  margin: 0;
+  color: #b4bfce;
+  line-height: 1.55;
+}
+
+.technical-disclosure {
+  margin-top: 1rem;
+  border-top: 1px solid rgba(255,255,255,.07);
+  padding-top: .75rem;
+}
+
+.technical-disclosure summary {
+  cursor: pointer;
+  color: #aeb9ca;
+  font-size: .78rem;
+  letter-spacing: .02em;
+}
+
+.technical-disclosure[open] summary {
+  color: #f4f7fb;
+  margin-bottom: .7rem;
+}
+
+.source-disclosure {
+  margin-bottom: 1rem;
+}
+
+.evidence-summary,
+.publication-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem .8rem;
+  margin-top: .8rem;
+  color: #8794a8;
+  font-size: .76rem;
+}
+
+.evidence-summary span,
+.publication-summary span {
+  padding-right: .8rem;
+  border-right: 1px solid rgba(255,255,255,.08);
+}
+
+.evidence-summary span:last-child,
+.publication-summary span:last-child {
+  border-right: 0;
+}
+
+@media (max-width: 800px) {
+  .trend-strip,
+  .narrative-grid,
+  .primary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .trend-strip {
+    gap: 0;
+  }
+
+  .trend-strip > div {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .publication-day-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .ledger-card,
+  .publication-card,
+  .context-card {
+    padding: 1rem;
+  }
+
+  .evidence-summary,
+  .publication-summary {
+    flex-direction: column;
+    gap: .25rem;
+  }
+
+  .evidence-summary span,
+  .publication-summary span {
+    border-right: 0;
+    padding-right: 0;
+  }
+}
