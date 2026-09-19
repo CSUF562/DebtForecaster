@@ -1,6 +1,6 @@
-import type { ContextEvidence } from "./contextEvidence.js";
-import { validateContextEvidence } from "./contextEvidence.js";
-import { classifyContextSource } from "./sourceRegistry.js";
+import type { ContextEvidence } from "./contextEvidence";
+import { validateContextEvidence } from "./contextEvidence";
+import { classifyContextSource } from "./sourceRegistry";
 
 export interface ContextWindow {
   startDate: string;
