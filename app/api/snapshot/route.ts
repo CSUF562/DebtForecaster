@@ -27,7 +27,10 @@ export async function GET() {
         contextStatus: contextSnapshot.status,
         contextCoverage: contextSnapshot.coverage,
         brief: {
+          publicationId: brief.publicationId,
+          release: brief.release,
           publicationStatus: brief.publicationStatus,
+          narrative: brief.narrative,
           explanation: brief.explanation,
           unresolved: brief.unresolved,
           context: brief.context,
