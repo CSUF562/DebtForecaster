@@ -1,22 +1,22 @@
-import type { WhatChangedExplanation } from "../explanations/whatChanged.js";
-import type { ContextEvidence } from "../context/contextEvidence.js";
-import { validateContextEvidence } from "../context/contextEvidence.js";
-import type { UnresolvedKnowledge } from "../epistemics/unresolvedKnowledge.js";
-import { validateUnresolvedKnowledge } from "../epistemics/unresolvedKnowledge.js";
-import type { CompetingExplanationSet } from "../epistemics/hypotheses.js";
-import { validateCompetingExplanationSet } from "../epistemics/hypotheses.js";
-import type { ContextMateriality } from "../epistemics/materiality.js";
-import { validateContextMateriality } from "../epistemics/materiality.js";
-import type { CorroborationSet } from "../epistemics/corroboration.js";
-import { validateCorroborationSet } from "../epistemics/corroboration.js";
-import type { CounterevidenceReview } from "../epistemics/counterevidence.js";
-import { validateCounterevidenceReview } from "../epistemics/counterevidence.js";
-import type { WordingCalibration } from "../epistemics/wording.js";
-import { validateWordingCalibration } from "../epistemics/wording.js";
-import type { RevisionTrigger } from "../epistemics/revisionTriggers.js";
-import { validateRevisionTrigger } from "../epistemics/revisionTriggers.js";
-import type { ContestabilityRecord } from "../epistemics/contestability.js";
-import { validateContestability } from "../epistemics/contestability.js";
+import type { WhatChangedExplanation } from "../explanations/whatChanged";
+import type { ContextEvidence } from "../context/contextEvidence";
+import { validateContextEvidence } from "../context/contextEvidence";
+import type { UnresolvedKnowledge } from "../epistemics/unresolvedKnowledge";
+import { validateUnresolvedKnowledge } from "../epistemics/unresolvedKnowledge";
+import type { CompetingExplanationSet } from "../epistemics/hypotheses";
+import { validateCompetingExplanationSet } from "../epistemics/hypotheses";
+import type { ContextMateriality } from "../epistemics/materiality";
+import { validateContextMateriality } from "../epistemics/materiality";
+import type { CorroborationSet } from "../epistemics/corroboration";
+import { validateCorroborationSet } from "../epistemics/corroboration";
+import type { CounterevidenceReview } from "../epistemics/counterevidence";
+import { validateCounterevidenceReview } from "../epistemics/counterevidence";
+import type { WordingCalibration } from "../epistemics/wording";
+import { validateWordingCalibration } from "../epistemics/wording";
+import type { RevisionTrigger } from "../epistemics/revisionTriggers";
+import { validateRevisionTrigger } from "../epistemics/revisionTriggers";
+import type { ContestabilityRecord } from "../epistemics/contestability";
+import { validateContestability } from "../epistemics/contestability";
 
 export interface Erc13GateResult {
   gate:
