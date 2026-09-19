@@ -283,3 +283,20 @@ h1 {
 .claim-label.unresolved {
   background: rgba(193, 133, 53, .14);
 }
+
+
+.method-link,
+.challenge-link {
+  color: #d7e0eb;
+  text-underline-offset: .2rem;
+}
+
+.challenge-link {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: .75rem 1rem;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: .65rem;
+  text-decoration: none;
+  background: rgba(255,255,255,.04);
+}
