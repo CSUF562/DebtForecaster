@@ -1,4 +1,4 @@
-import type { DebtObservation } from "../fiscal/debt.js";
+import type { DebtObservation } from "../fiscal/debt";
 
 export interface DebtObservationRepository {
   save(observation: DebtObservation): Promise<"inserted" | "duplicate">;
