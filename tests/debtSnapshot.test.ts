@@ -27,6 +27,7 @@ test("builds a dashboard-ready snapshot with freshness and lineage-preserving tr
   const snapshot = buildDebtSnapshotFromHistory(history, now);
 
   assert.equal(snapshot.latest?.recordDate, "2026-09-17");
+  assert.equal(snapshot.dataSource, "provided-history");
   assert.equal(snapshot.history.length, 4);
   assert.equal(snapshot.freshness?.status, "current");
   assert.equal(snapshot.trends.previous?.absoluteChange, "1.00");
@@ -41,6 +42,7 @@ test("blocks stale observations from being presented as current", () => {
     new Date("2026-09-18T18:00:00Z")
   );
 
+  assert.equal(snapshot.dataSource, "provided-history");
   assert.equal(snapshot.freshness?.status, "stale");
   assert.equal(snapshot.publication.canPresentAsCurrent, false);
 });
