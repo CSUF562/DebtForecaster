@@ -590,3 +590,69 @@ h1 {
     gap: .5rem;
   }
 }
+
+
+.ledger-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.ledger-card {
+  padding: 1.25rem;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 1rem;
+  background: rgba(255,255,255,.025);
+}
+
+.ledger-card h3 {
+  margin: .9rem 0 .55rem;
+  font-size: 1.15rem;
+}
+
+.ledger-card p {
+  color: #b4bfce;
+  line-height: 1.55;
+}
+
+.ledger-card-superseded {
+  opacity: .78;
+  background: rgba(193,133,53,.035);
+}
+
+.ledger-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .75rem 1rem;
+  margin: 1rem 0 0;
+}
+
+.ledger-meta div {
+  padding-top: .65rem;
+  border-top: 1px solid rgba(255,255,255,.07);
+}
+
+.ledger-meta dt {
+  margin-bottom: .25rem;
+  color: #8794a8;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: .65rem;
+}
+
+.ledger-meta dd {
+  margin: 0;
+  color: #d7e0eb;
+  overflow-wrap: anywhere;
+  font-size: .82rem;
+}
+
+.ledger-meta code {
+  font-size: .74rem;
+  color: #c5ceda;
+}
+
+@media (max-width: 700px) {
+  .ledger-meta {
+    grid-template-columns: 1fr;
+  }
+}
