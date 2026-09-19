@@ -20,7 +20,7 @@ export const SEPTEMBER_2026_CONTEXT_CASE: LiveContextCaseStudy = {
       sourceName: "Congressional Budget Office",
       sourceUrl: "https://www.cbo.gov/publication/61984",
       sourceTier: "primary-government",
-      retrievedAt: "2026-09-19T00:45:00Z",
+      retrievedAt: "2026-09-19T04:45:00Z",
       confidence: "high",
       revisionOfId: null,
       supersededById: null,
@@ -38,7 +38,7 @@ export const SEPTEMBER_2026_CONTEXT_CASE: LiveContextCaseStudy = {
       sourceUrl:
         "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a.htm",
       sourceTier: "primary-government",
-      retrievedAt: "2026-09-19T00:45:00Z",
+      retrievedAt: "2026-09-19T04:45:00Z",
       confidence: "high",
       revisionOfId: null,
       supersededById: null,
@@ -56,7 +56,7 @@ export const SEPTEMBER_2026_CONTEXT_CASE: LiveContextCaseStudy = {
       sourceUrl:
         "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?field_tdr_date_value_month=202609&type=daily_treasury_yield_curve",
       sourceTier: "primary-government",
-      retrievedAt: "2026-09-19T00:45:00Z",
+      retrievedAt: "2026-09-19T04:45:00Z",
       confidence: "high",
       revisionOfId: null,
       supersededById: null,
