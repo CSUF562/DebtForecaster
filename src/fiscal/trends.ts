@@ -1,4 +1,4 @@
-import type { DebtObservation } from "./debt.js";
+import type { DebtObservation } from "./debt";
 
 export interface DebtChange {
   evidenceClass: "derived";
