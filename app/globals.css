@@ -656,3 +656,66 @@ h1 {
     grid-template-columns: 1fr;
   }
 }
+
+
+.evidence-coverage {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .75rem;
+  margin: 0 0 1rem;
+}
+
+.evidence-coverage > div {
+  padding: .9rem 1rem;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: .8rem;
+  background: rgba(75,170,115,.035);
+}
+
+.evidence-coverage strong {
+  display: block;
+  margin-bottom: .25rem;
+  color: #f4f7fb;
+  font-size: 1rem;
+}
+
+.evidence-coverage span {
+  color: #8794a8;
+  font-size: .72rem;
+  line-height: 1.4;
+}
+
+.source-status-list {
+  display: grid;
+  gap: .45rem;
+  margin-bottom: 1rem;
+}
+
+.source-status {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .7rem 0;
+  border-top: 1px solid rgba(255,255,255,.07);
+  color: #aeb9ca;
+  font-size: .8rem;
+}
+
+.source-status span:last-child {
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-size: .68rem;
+  color: #c5ceda;
+}
+
+@media (max-width: 700px) {
+  .evidence-coverage {
+    grid-template-columns: 1fr;
+  }
+
+  .source-status {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: .25rem;
+  }
+}
