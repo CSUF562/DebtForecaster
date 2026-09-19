@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 import { getDebtSnapshot } from "../../../src/application/debtSnapshot";
 import { buildDailyAccountingBrief } from "../../../src/application/dailyBrief";
-import { buildSeptember2026ContextBundle } from "../../../src/context/currentCaseStudy";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
     const snapshot = await getDebtSnapshot();
-    const context = buildSeptember2026ContextBundle();
-    const brief = buildDailyAccountingBrief(snapshot.history, context.items);
+    // Production context remains empty until verified live source adapters are wired.
+    // This preserves the boundary between live Treasury accounting and non-live case-study fixtures.
+    const brief = buildDailyAccountingBrief(snapshot.history, []);
 
     return NextResponse.json(
       {
