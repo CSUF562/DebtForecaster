@@ -1,4 +1,4 @@
-import { getDebtSnapshot } from "../../src/application/debtSnapshot.js";
+import { getDebtSnapshot } from "../../src/application/debtSnapshot";
 import { FreeForecaster } from "./FreeForecaster";
 
 export const dynamic = "force-dynamic";
