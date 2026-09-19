@@ -3,6 +3,8 @@ import type { ContextEvidence } from "../context/contextEvidence.js";
 import { validateContextEvidence } from "../context/contextEvidence.js";
 import type { UnresolvedKnowledge } from "../epistemics/unresolvedKnowledge.js";
 import { validateUnresolvedKnowledge } from "../epistemics/unresolvedKnowledge.js";
+import type { CompetingExplanationSet } from "../epistemics/hypotheses.js";
+import { validateCompetingExplanationSet } from "../epistemics/hypotheses.js";
 
 export interface Erc13GateResult {
   gate:
@@ -11,13 +13,14 @@ export interface Erc13GateResult {
     | "G3-causality"
     | "G4-source-quality"
     | "G5-uncertainty-revision"
-    | "G6-unresolved-knowledge";
+    | "G6-unresolved-knowledge"
+    | "G7-competing-explanations";
   status: "pass" | "fail";
   findings: string[];
 }
 
 export interface Erc13Assessment {
-  protocolVersion: "0.2.0";
+  protocolVersion: "0.3.0";
   publishable: boolean;
   results: Erc13GateResult[];
 }
@@ -25,7 +28,8 @@ export interface Erc13Assessment {
 export function assessDailyExplanation(
   explanation: WhatChangedExplanation,
   context: ContextEvidence[] = [],
-  unresolved: UnresolvedKnowledge[] = []
+  unresolved: UnresolvedKnowledge[] = [],
+  competingExplanations: CompetingExplanationSet[] = []
 ): Erc13Assessment {
   const sourceFindings: string[] = [];
   const classificationFindings: string[] = [];
@@ -33,6 +37,7 @@ export function assessDailyExplanation(
   const sourceQualityFindings: string[] = [];
   const uncertaintyFindings: string[] = [];
   const unresolvedFindings: string[] = [];
+  const competingExplanationFindings: string[] = [];
 
   if (!explanation.currentObservationId || !explanation.priorObservationId) {
     sourceFindings.push("Explanation is missing source observation lineage.");
@@ -95,6 +100,13 @@ export function assessDailyExplanation(
     );
   }
 
+  for (const set of competingExplanations) {
+    const findings = validateCompetingExplanationSet(set);
+    competingExplanationFindings.push(
+      ...findings.map(finding => `${set.questionId}: ${finding}`)
+    );
+  }
+
   const results: Erc13GateResult[] = [
     {
       gate: "G1-source",
@@ -125,11 +137,16 @@ export function assessDailyExplanation(
       gate: "G6-unresolved-knowledge",
       status: unresolvedFindings.length === 0 ? "pass" : "fail",
       findings: unresolvedFindings
+    },
+    {
+      gate: "G7-competing-explanations",
+      status: competingExplanationFindings.length === 0 ? "pass" : "fail",
+      findings: competingExplanationFindings
     }
   ];
 
   return {
-    protocolVersion: "0.2.0",
+    protocolVersion: "0.3.0",
     publishable: results.every(result => result.status === "pass"),
     results
   };
