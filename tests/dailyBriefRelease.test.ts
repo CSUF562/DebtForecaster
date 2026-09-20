@@ -16,13 +16,14 @@ function observation(
     debtHeldByPublic: publicDebt,
     intragovernmentalHoldings: intragov,
     totalPublicDebtOutstanding: total,
-    sourceLineNumber: "1",
-    sourceUrl: "https://fiscaldata.treasury.gov/",
+    sourceAgency: "U.S. Department of the Treasury",
+    sourceDataset: "Debt to the Penny",
+    sourceRecordId: "1",
     retrievedAt: "2026-09-19T00:00:00Z",
     rawPayloadHash: "a".repeat(64),
     adapterVersion: "1.0.0",
     validationStatus: "pass",
-    validationFindings: []
+    validationNotes: []
   };
 }
 
