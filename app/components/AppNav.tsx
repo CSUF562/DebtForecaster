@@ -13,6 +13,7 @@ export function AppNav() {
           <Link href="/history">History</Link>
           <Link href="/publications">Archive</Link>
           <Link href="/forecaster">Forecaster</Link>
+          <Link href="/premium">Premium</Link>
           <Link href="/evidence">Evidence</Link>
           <Link href="/methodology">Methodology</Link>
         </nav>
