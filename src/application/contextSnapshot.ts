@@ -2,6 +2,7 @@ import type { ContextEvidence } from "../context/contextEvidence";
 import { fetchTreasuryYieldCurveContext } from "../context/treasuryYieldCurve";
 import { fetchCboMonthlyBudgetContext } from "../context/cboMonthlyBudget";
 import { fetchFedFomcContext } from "../context/fedFomc";
+import { fetchTreasuryCapitalFlowsContext } from "../context/treasuryCapitalFlows";
 import {
   getPostgresContextEvidenceRepository,
   type ContextSourceKey,
@@ -103,6 +104,11 @@ export async function getContextSnapshot(
       name: "Federal Reserve FOMC statement",
       sourceKey: "fed-fomc-statement",
       run: date => fetchFedFomcContext({ asOfDate: date })
+    },
+    {
+      name: "Treasury International Capital flows",
+      sourceKey: "treasury-capital-flows",
+      run: date => fetchTreasuryCapitalFlowsContext({ asOfDate: date })
     }
   ];
 
