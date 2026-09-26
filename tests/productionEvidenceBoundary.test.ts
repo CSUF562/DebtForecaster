@@ -8,7 +8,7 @@ test("shared context contract exposes all primary context channels", async () =>
   const snapshot = await getContextSnapshot(null);
 
   assert.equal(snapshot.items.length, 0);
-  assert.equal(snapshot.coverage.total, 3);
+  assert.equal(snapshot.coverage.total, 4);
   assert.equal(snapshot.coverage.available, 0);
   assert.equal(snapshot.coverage.live, 0);
   assert.equal(snapshot.coverage.status, "unavailable");
@@ -18,6 +18,7 @@ test("shared context contract exposes all primary context channels", async () =>
     [
       "cbo-monthly-budget-review",
       "fed-fomc-statement",
+      "treasury-capital-flows",
       "treasury-yield-curve"
     ]
   );

@@ -11,7 +11,8 @@ import { getDatabasePool, withTransaction } from "./postgresDebtRepository";
 export type ContextSourceKey =
   | "treasury-yield-curve"
   | "cbo-monthly-budget-review"
-  | "fed-fomc-statement";
+  | "fed-fomc-statement"
+  | "treasury-capital-flows";
 
 export interface PersistedContextEvidence extends ContextEvidence {
   versionId: string;
