@@ -31,6 +31,57 @@ test("selects the latest TIC release on or before the debt date", () => {
   assert.equal(release.sourceUrl, "https://home.treasury.gov/news/press-releases/sb0631");
 });
 
+test("binds adjacent release dates to their own URLs at the as-of boundary", () => {
+  for (const asOfDate of ["2026-08-17", "2026-08-20", "2026-09-15"]) {
+    assert.deepEqual(parseTicReleaseListing(LISTING, asOfDate), {
+      eventDate: "2026-08-17",
+      title: "Treasury International Capital Data for June 2026",
+      sourceUrl: "https://home.treasury.gov/news/press-releases/sb0601"
+    });
+  }
+  assert.equal(parseTicReleaseListing(LISTING, "2026-08-16"), null);
+});
+
+test("handles nested release rows, dates after links, and long markup", () => {
+  const listing = `<div class="listing">
+    <div class="release"><div><a href="/new">Treasury International Capital Data for July 2026</a></div>
+      <time>September 16, 2026</time></div>
+    <div class="release"><time>August 17, 2026</time>${"<!-- padding -->".repeat(100)}
+      <div><a href="/old">Treasury International Capital Data for June 2026</a></div></div>
+    </div>`;
+  assert.equal(parseTicReleaseListing(listing, "2026-09-20")?.sourceUrl,
+    "https://home.treasury.gov/new");
+  assert.equal(parseTicReleaseListing(listing, "2026-08-20")?.sourceUrl,
+    "https://home.treasury.gov/old");
+});
+
+test("does not borrow a date from an adjacent release for an undated row", () => {
+  const listing = `<div>${LISTING}
+    <div class="release"><a href="/undated">Treasury International Capital Data for May 2026</a></div>
+    </div>`;
+  assert.equal(parseTicReleaseListing(listing, "2026-08-20")?.sourceUrl,
+    "https://home.treasury.gov/news/press-releases/sb0601");
+  assert.equal(parseTicReleaseListing(listing, "2026-08-16"), null);
+});
+
+test("fetches the applicable older release and preserves its evidence identity", async () => {
+  const requested: string[] = [];
+  const context = await fetchTreasuryCapitalFlowsContext({
+    asOfDate: "2026-08-20",
+    fetchImpl: async input => {
+      requested.push(String(input));
+      return new Response(requested.length === 1 ? LISTING : RELEASE);
+    }
+  });
+  assert.ok(context);
+  assert.equal(requested[1], "https://home.treasury.gov/news/press-releases/sb0601");
+  assert.equal(context.sourceUrl, requested[1]);
+  assert.equal(context.eventDate, "2026-08-17");
+  assert.equal(context.id, "ctx-treasury-capital-flows-2026-08-17");
+  assert.equal(context.causalClaim, false);
+  assert.match(context.uncertaintyNote, /does not establish/);
+});
+
 test("separates maturity and investor-class flows", () => {
   const flow = parseTicRelease(RELEASE);
 

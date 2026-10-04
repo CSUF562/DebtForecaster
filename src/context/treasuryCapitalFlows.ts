@@ -56,6 +56,27 @@ function parseDate(value: string): string | null {
   return `${match[3]}-${months[match[1].toLowerCase()]}-${match[2].padStart(2, "0")}`;
 }
 
+// Keep date lookup inside a complete listing item, including nested title markup.
+function releaseBlocks(html: string): { start: number; end: number }[] {
+  const stack: { tag: string; start: number }[] = [];
+  const blocks: { start: number; end: number }[] = [];
+  const markup = html.replace(/<!--[\s\S]*?-->|<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi,
+    value => " ".repeat(value.length));
+  for (const match of markup.matchAll(/<(\/?)(div|p|li|tr|article|section)\b[^>]*>/gi)) {
+    const tag = match[2].toLowerCase();
+    if (!match[1]) {
+      stack.push({ tag, start: match.index! });
+      continue;
+    }
+    let index = stack.length - 1;
+    while (index >= 0 && stack[index].tag !== tag) index--;
+    if (index < 0) continue;
+    const [opening] = stack.splice(index);
+    blocks.push({ start: opening.start, end: match.index! + match[0].length });
+  }
+  return blocks.sort((a, b) => (a.end - a.start) - (b.end - b.start));
+}
+
 export function parseTicReleaseListing(
   html: string,
   asOfDate: string
@@ -65,16 +86,26 @@ export function parseTicReleaseListing(
   )];
 
   const releases: TicReleaseLink[] = [];
+  const blocks = releaseBlocks(html);
 
   for (const anchor of anchors) {
     const title = stripHtml(anchor[2]);
     if (!/Treasury International Capital Data for/i.test(title)) continue;
 
     const index = anchor.index ?? 0;
-    const nearby = stripHtml(
-      html.slice(Math.max(0, index - 500), Math.min(html.length, index + 1000))
+    // Never cross into a sibling release: only a block containing this one
+    // TIC link may provide its publication date. Undated items stay unavailable.
+    const block = blocks.find(candidate =>
+      candidate.start <= index && candidate.end >= index + anchor[0].length &&
+      anchors.filter(link =>
+        link.index! >= candidate.start && link.index! < candidate.end &&
+        /Treasury International Capital Data for/i.test(stripHtml(link[2]))
+      ).length === 1 &&
+      parseDate(stripHtml(html.slice(candidate.start, candidate.end))) !== null
     );
-    const eventDate = parseDate(nearby);
+    const eventDate = block
+      ? parseDate(stripHtml(html.slice(block.start, block.end)))
+      : null;
     if (!eventDate || eventDate > asOfDate) continue;
 
     releases.push({
